@@ -1,13 +1,11 @@
+import 'package:elbe/elbe.dart' as a;
 import 'package:flutter/material.dart';
-import 'package:rescuemule/main.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 const Color primary = Color(0xFF46B4E3);
 const Color secondary = Color(0xFF212E62);
 const Color warning = Color(0xFFFF1D1D);
 const Color grey = Color(0xFFB2B2B2);
 const Color selected = Color.fromARGB(80, 255, 255, 255);
-
 
 /// Flutter code sample for [Scaffold].
 
@@ -38,34 +36,41 @@ class ScaffoldExample extends StatefulWidget {
 class _ScaffoldExampleState extends State<ScaffoldExample> {
   int currentPageIndex = 0;
   final List<Chat> chats = [
-  Chat('Freund 1', 'This is a notification'),
-  Chat('Freund 2', 'Another notification'),
-  // Add more chats here
-];
+    Chat('Freund 1', 'This is a notification'),
+    Chat('Freund 2', 'Another notification'),
+    // Add more chats here
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RescueMule'), 
-        backgroundColor: primary, 
-        shadowColor: grey, 
+        title: const Text('RescueMule'),
+        backgroundColor: primary,
+        shadowColor: grey,
         elevation: 3.0,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Settings',
-            onPressed: () {}
-          ), ], 
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.message_rounded),
+            tooltip: 'messages',
+            onPressed: () {
+              context.push("/msg");
+            },
+          ),
+        ],
       ),
-      body: <Widget>[
+      body:
+          <Widget>[
             /// Home page
             Card(
               shadowColor: Colors.transparent,
               margin: const EdgeInsets.all(8.0),
-              child: SizedBox.expand(
-                child: Center(child: Text('Home page')),
-              ),
+              child: SizedBox.expand(child: Center(child: Text('Home page'))),
             ),
 
             /// Chats page
@@ -87,33 +92,33 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                         ),
                       );
                     },
-                  )
+                  ),
                 );
-              }
-            )] [currentPageIndex],
+              },
+            ),
+          ][currentPageIndex],
 
-
-            ///const Padding(
-            ///  padding: EdgeInsets.all(8.0),
-            ///  child: Column(
-            ///    children: <Widget>[
-            ///      Card(
-            ///        child: ListTile(
-            ///          leading: Icon(Icons.message_sharp),
-            ///          title: Text('Freund 1'),
-            ///          subtitle: Text('This is a notification'),
-            ///        ),
-            ///      ),
-            ///      Card(
-            ///        child: ListTile(
-            ///          leading: Icon(Icons.message_sharp),
-            ///          title: Text('Freund 2'),
-            ///          subtitle: Text('This is a notification'),
-            ///        ),
-            ///      ),
-            ///    ],
-            ///  ),
-            ///)] [currentPageIndex],
+      ///const Padding(
+      ///  padding: EdgeInsets.all(8.0),
+      ///  child: Column(
+      ///    children: <Widget>[
+      ///      Card(
+      ///        child: ListTile(
+      ///          leading: Icon(Icons.message_sharp),
+      ///          title: Text('Freund 1'),
+      ///          subtitle: Text('This is a notification'),
+      ///        ),
+      ///      ),
+      ///      Card(
+      ///        child: ListTile(
+      ///          leading: Icon(Icons.message_sharp),
+      ///          title: Text('Freund 2'),
+      ///          subtitle: Text('This is a notification'),
+      ///        ),
+      ///      ),
+      ///    ],
+      ///  ),
+      ///)] [currentPageIndex],
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
@@ -125,27 +130,27 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.menu), label: 'Chats'),
         ],
-        backgroundColor: primary
+        backgroundColor: primary,
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-        },
+        onPressed: () {},
         foregroundColor: primary,
         backgroundColor: secondary,
         shape: CircleBorder(),
-        child: const Icon(Icons.add)
-      )
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
+
 class ChatDetailPage extends StatelessWidget {
   final Chat chat;
   const ChatDetailPage({super.key, required this.chat});
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
       appBar: AppBar(title: Text(chat.name)),
       body: Center(child: Text('Chat with ${chat.name}\n${chat.lastMessage}')),
     );

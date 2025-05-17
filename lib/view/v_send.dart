@@ -19,14 +19,16 @@ class SendView extends StatelessWidget {
             IconButton.major(
               icon: Icons.send,
               onTap: () async {
-                context.showToast("discovering and sending...");
                 var to = await BluetoothService.i.write(
-                  1,
-                  1,
-                  controller.value.text.codeUnits,
+                  service: 1,
+                  variable: 1,
+                  message: controller.value.text.codeUnits,
                 );
                 controller.clear();
-                context.showToast("message sent to $to");
+                context.showToast(
+                  "sent to ${to.length} devices",
+                  icon: Icons.check,
+                );
               },
             ),
           ].spaced(),

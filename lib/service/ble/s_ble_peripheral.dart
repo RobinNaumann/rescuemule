@@ -94,5 +94,5 @@ UUID makeUUID(int service, [int? char]) {
       .substring(0, 4);
   final sHex = service.toRadixString(16).padLeft(4, "0");
   final cHex = char?.toRadixString(16).padLeft(4, "0") ?? "AAAA";
-  return UUID.fromString("$appHex$sHex-$cHex-$base");
+  return UUID.fromString("$appHex$sHex-$cHex-$base".toLowerCase());
 }
