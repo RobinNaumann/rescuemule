@@ -1,5 +1,6 @@
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
+import 'package:rescuemule/service/s_bluetooth.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -16,7 +17,8 @@ class HomePage extends StatelessWidget {
               Button.minor(
                 label: "advertise",
                 onTap: () async {
-                  context.showToast("TODO: advertise");
+                  await BluetoothService.i.advertise();
+                  context.showToast("started to advertise");
                   //await advertise();
                 },
               ),

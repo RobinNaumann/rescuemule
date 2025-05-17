@@ -1,4 +1,4 @@
-package de.rescue-mate.rescuemule
+package de.rescuemate.rescuemule
 
 import io.flutter.embedding.android.FlutterActivity
 
