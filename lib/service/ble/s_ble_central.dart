@@ -20,7 +20,7 @@ class BleCentralManager {
     List<int> message,
   ) async {
     // find the devices
-    final devices = await _scan([service]);
+    final devices = await scan([service]);
     var sentTo = 0;
 
     for (var device in devices) {
@@ -68,7 +68,7 @@ class BleCentralManager {
     _manager.disconnect(peripheral);
   }
 
-  Future<List<Peripheral>> _scan(List<int> services) async {
+  Future<List<Peripheral>> scan(List<int> services) async {
     await _prepare();
 
     final controller = StreamController<DiscoveredEventArgs>();

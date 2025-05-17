@@ -28,11 +28,11 @@ class HomePage extends StatelessWidget {
 
                   Message m1 = Message.createMessage(
                     sender: "jannes",
-                    receiver: "ich",
+                    receiver: debugName,
                     message: "message",
                   );
                   Message m2 = Message.createMessage(
-                    sender: "ich",
+                    sender: debugName,
                     receiver: "jannes",
                     message: "message",
                   );
