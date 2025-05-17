@@ -1,18 +1,16 @@
 //when discovering check if any messages need to be send
 import 'dart:collection';
-//import 'dart:js_interop';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
+import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
-import 'package:rescuemule/service/ble/s_ble_central.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
 import 'package:rescuemule/service/s_message_service.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
 
 class SendingService {
   final MessageService _messageService = MessageService();
-  
-  
+
   Future<void> registerListener() async {
     BluetoothService.i.devices.listen((devices) {
       // This will be called whenever the list of devices changes
@@ -22,7 +20,7 @@ class SendingService {
   }
 
   Future<void> check(List<Peripheral> devices) async {
-    SentIDsService _sentIDsService = SentIDsService();
+    SentIDsService sentIDsService = SentIDsService();
     HashMap<Peripheral, List<Message>> deviceMessageMap = HashMap();
 
     for (var device in devices) {
@@ -40,15 +38,21 @@ class SendingService {
           // send message
           BluetoothService.i.write(
             service: 1,
-            variable: 1,//todo actual values
+            variable: 1, //todo actual values
             message: message.toString().codeUnits,
             devices: [device.uuid],
           );
-          _sentIDsService.addSentID(device.uuid, message.id);//acknowledge that messsage was sent
-          print('Sending message: ${message.id} to device: ${device.uuid}');
+          sentIDsService.addSentID(
+            device.uuid,
+            message.id,
+          ); //acknowledge that messsage was sent
+          logger.d(
+            this,
+            'Sending message: ${message.id} to device: ${device.uuid}',
+          );
         }
       } else {
-        print('No messages to send to device: ${device.uuid}');
+        logger.d(this, 'No messages to send to device: ${device.uuid}');
       }
     }
   }

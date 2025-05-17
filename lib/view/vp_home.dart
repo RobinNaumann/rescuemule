@@ -1,9 +1,8 @@
 import 'package:elbe/elbe.dart' as a;
 import 'package:flutter/material.dart';
-import 'package:rescuemule/main.dart';
 import 'package:rescuemule/service/s_user_service.dart';
+
 import 'chat.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 const Color primary = Color(0xFF46B4E3);
 const Color secondary = Color(0xFF212E62);
@@ -34,17 +33,18 @@ class ScaffoldExample extends StatefulWidget {
 class _ScaffoldExampleState extends State<ScaffoldExample> {
   int currentPageIndex = 0;
   final List<MyChat> chats = [
-  MyChat(contact: 'Peter'),
-  MyChat(contact: 'Peter2'),
-  // Add more chats here
-];
+    MyChat(contact: 'Peter'),
+    MyChat(contact: 'Peter2'),
+    // Add more chats here
+  ];
 
   @override
   Widget build(BuildContext context) {
     UserService userService = UserService();
     String? user;
-    userService.loadUser().then((onValue){
-      user = onValue;});
+    userService.loadUser().then((onValue) {
+      user = onValue;
+    });
     user ??= "Name";
     return Scaffold(
       appBar: AppBar(
@@ -92,9 +92,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                       ),
                     ),
                     // Zentrierter Text
-                    const Center(
-                      child: Text('Home page'),
-                    ),
+                    const Center(child: Text('Home page')),
                   ],
                 ),
               ),
@@ -121,8 +119,9 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                     },
                   ),
                 );
-              }
-            )] [currentPageIndex],
+              },
+            ),
+          ][currentPageIndex],
 
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
