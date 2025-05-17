@@ -2,7 +2,7 @@ import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 
 class Chunker {
-  static const int chunkSize = 10;
+  static const int chunkSize = 19;
   // {deviceId: {characteristicId:  [chunks]}}
   final Map<String, Map<String, List<int>>> _chunkCaches = {};
   final List<BLEService> _services;
