@@ -8,7 +8,12 @@ class DevicesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return MessagingBit.builder(
       onData:
-          (bit, data) => Column(
+          (bit, data) => Text(
+            "${data.devices.length} device${data.devices.length == 1 ? "" : "s"} visible",
+            textAlign: TextAlign.center,
+          ),
+
+      /*Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children:
                 [
@@ -20,7 +25,7 @@ class DevicesList extends StatelessWidget {
                       child: Text(d.uuid.toString()),
                     ),
                 ].spaced(),
-          ),
+          ),*/
     );
   }
 }
