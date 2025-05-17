@@ -1,5 +1,6 @@
 //when discovering check if any messages need to be send
 import 'dart:collection';
+import 'dart:js_interop';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:rescuemule/model/m_message.dart';
@@ -10,12 +11,18 @@ import 'package:rescuemule/service/s_sent_ids_service.dart';
 
 class SendingService {
   final MessageService _messageService = MessageService();
+  
+  
+  Future<void> registerListener() async {
+    BluetoothService.i.devices.listen((devices) {
+      // This will be called whenever the list of devices changes
+      //print('Devices: $devices');
+      check(devices);
+    });
+  }
 
-  Future<void> check() async {
-    BluetoothService _bluetoothService = BluetoothService.i;
+  Future<void> check(List<Peripheral> devices) async {
     SentIDsService _sentIDsService = SentIDsService();
-    // Example: Load messages and print how many are pending to send
-    final devices = await DEMO_central_service.scan([1]);
     HashMap<Peripheral, List<Message>> deviceMessageMap = HashMap();
 
     for (var device in devices) {
@@ -29,13 +36,13 @@ class SendingService {
       final messages = entry.value;
 
       if (messages.isNotEmpty) {
-        // Send messages to the device
         for (var message in messages) {
           // send message
-          _bluetoothService.write(
-            1,
-            1,
-            message.toString().codeUnits,
+          BluetoothService.i.write(
+            service: 1,
+            variable: 1,//todo actual values
+            message: message.toString().codeUnits,
+            devices: [device.uuid],
           );
           _sentIDsService.addSentID(device.uuid, message.id);//acknowledge that messsage was sent
           print('Sending message: ${message.id} to device: ${device.uuid}');

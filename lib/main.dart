@@ -1,4 +1,5 @@
 import 'package:elbe/elbe.dart';
+import 'package:rescuemule/service/s_sending_service.dart';
 import 'package:rescuemule/view/vp_home.dart';
 import 'package:rescuemule/view/vp_messaging.dart';
 
@@ -8,7 +9,8 @@ const debugName = "Mac";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppInfoService.init();
-
+  SendingService sendingService = SendingService();
+  sendingService.registerListener();
   runApp(const YourApp());
 }
 
