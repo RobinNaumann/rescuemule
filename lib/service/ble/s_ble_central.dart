@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/elbe.dart';
+import 'package:rescuemule/service/ble/chunker.dart';
 import 'package:rescuemule/service/ble/s_ble_peripheral.dart';
-import 'package:rescuemule/service/ble/s_chunking.dart';
 
 class BleCentralManager {
   List<int> services = [];
@@ -68,15 +68,14 @@ class BleCentralManager {
       throw Exception("Characteristic $service-$char not found");
     }
 
-    await Chunker.sendChunks(
-      message,
-      (chunk) async => await _manager.writeCharacteristic(
+    await Chunker.sendChunks(message, (chunk) async {
+      await _manager.writeCharacteristic(
         peripheral,
         gattChar,
         value: Uint8List.fromList(chunk),
         type: GATTCharacteristicWriteType.withResponse,
-      ),
-    );
+      );
+    });
     //await Future.delayed(const Duration(milliseconds: 10));
     await _manager.disconnect(peripheral);
   }

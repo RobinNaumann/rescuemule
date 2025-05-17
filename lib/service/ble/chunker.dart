@@ -2,7 +2,7 @@ import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 
 class Chunker {
-  static const int chunkSize = 20;
+  static const int chunkSize = 10;
   // {deviceId: {characteristicId:  [chunks]}}
   final Map<String, Map<String, List<int>>> _chunkCaches = {};
   final List<BLEService> _services;
@@ -24,10 +24,8 @@ class Chunker {
 
     for (int i = 0; i < chunks.length; i++) {
       final prefix = i == chunks.length - 1 ? 0 : 1;
-      print(
-        "CHUNKER: sending chunk $i/${chunks.length - 1} $prefix ${chunks[i]}",
-      );
-      await send([prefix, ...chunks[i]]);
+      final m = [prefix, ...chunks[i]];
+      await send(m);
     }
   }
 
