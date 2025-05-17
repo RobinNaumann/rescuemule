@@ -19,9 +19,8 @@ class MessagingView extends StatelessWidget {
           //crossAxisAlignment: CrossAxisAlignment.stretch,
           children:
               [
-                Text.h5("send a message"),
+                Text.h5("send broadcast"),
                 SendView(),
-                Text.h5("discovered devices"),
                 DevicesList(),
                 Text.h5("received messages"),
                 MessageList(),

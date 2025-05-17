@@ -4,7 +4,7 @@ import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/services/s_app_info.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
-import 'package:rescuemule/service/ble/s_chunking.dart';
+import 'package:rescuemule/service/ble/chunker.dart';
 
 class BLEPeripheralManager {
   final String appId;

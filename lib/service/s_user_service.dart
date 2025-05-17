@@ -1,38 +1,36 @@
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:rescuemule/model/m_user.dart';
 
 class UserService {
-  static const String _storageKey = 'saved_users';
-  static const String _clientKey = 'client_data';
+  static const String _userKey = 'saved_user';
+  static const String _contactsKey = 'saved_contacts';
 
-  Future<void> saveUser(User user) async {
+  Future<void> saveUser(String user) async {
+
     final prefs = await SharedPreferences.getInstance();
-    final List<String> users = prefs.getStringList(_storageKey) ?? [];
-    users.add(jsonEncode(user.toJson()));
-    await prefs.setStringList(_storageKey, users);
+
+    await prefs.setString(_userKey, user);
   }
 
-  Future<List<User>> loadUsers() async {
+  Future<String?> loadUser() async {
+
     final prefs = await SharedPreferences.getInstance();
-    final List<String> users = prefs.getStringList(_storageKey) ?? [];
-    return users.map((userString) => User.fromJson(jsonDecode(userString))).toList();
+    
+    return prefs.getString(_userKey);
   }
 
-  Future<void> clearUsers() async {
+  Future<void> saveContact(String contact) async {
+
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_storageKey);
+    final List<String> contacts = prefs.getStringList(_contactsKey) ?? [];
+
+    contacts.add(contact);
+    await prefs.setStringList(_contactsKey, contacts);
   }
 
-  Future<void> saveClientUser(User user) async {
+  Future<List<String>> loadContacts() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_clientKey, jsonEncode(user.toJson()));
-  }
+    final List<String> contacts = prefs.getStringList(_contactsKey) ?? [];
 
-  Future<User?> loadClientUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? userString = prefs.getString(_clientKey);
-    if (userString == null) return null;
-    return User.fromJson(jsonDecode(userString));
+    return contacts;
   }
 }

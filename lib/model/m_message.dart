@@ -1,3 +1,6 @@
+import 'package:flutter_chat_core/flutter_chat_core.dart';
+import 'package:flutter_chat_core/src/models/message.dart';
+
 class Message {
   final String sender;
   final String receiver;
@@ -33,4 +36,8 @@ class Message {
       );
 
    int get id => (sender + receiver + creationTime.toString()).hashCode;
+
+  TextMessage toTextMessage() {
+    return TextMessage(id: '$id', authorId: sender, text: message);
+  }
 }
