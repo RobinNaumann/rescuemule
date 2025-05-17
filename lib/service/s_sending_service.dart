@@ -1,6 +1,6 @@
 //when discovering check if any messages need to be send
 import 'dart:collection';
-import 'dart:js_interop';
+//import 'dart:js_interop';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:rescuemule/model/m_message.dart';
