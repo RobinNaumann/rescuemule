@@ -17,7 +17,7 @@ void main() async {
 }
 
 final router = GoRouter(
-  routes: [GoRoute(path: '/', builder: (context, _) => const HomePage())],
+  routes: [GoRoute(path: '/', builder: (context, _) => const ScaffoldExampleApp())],
 );
 
 class YourApp extends StatelessWidget {
