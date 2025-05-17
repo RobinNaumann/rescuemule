@@ -1,12 +1,42 @@
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
 
-class SendView extends StatelessWidget {
+class SendView extends StatefulWidget {
   const SendView({super.key});
 
   @override
+  State<SendView> createState() => _SendViewState();
+}
+
+class _SendViewState extends State<SendView> {
+  TextEditingController controller = TextEditingController();
+  bool isSending = false;
+
+  void send() async {
+    if (isSending) return;
+    try {
+      setState(() => isSending = true);
+      var to = await BluetoothService.i.write(
+        service: 1,
+        variable: 1,
+        message: stringToAscii(controller.value.text),
+      );
+      if (to.isEmpty) {
+        context.showToast("no devices found", icon: Icons.alertTriangle);
+        setState(() => isSending = false);
+        return;
+      }
+      controller.clear();
+      context.showToast("sent to ${to.length} devices", icon: Icons.check);
+      setState(() => isSending = false);
+    } catch (e) {
+      context.showToast("failed to send message", icon: Icons.alertOctagon);
+      setState(() => isSending = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
     return Row(
       children:
           [
@@ -16,18 +46,12 @@ class SendView extends StatelessWidget {
                 decoration: elbeFieldDeco(context, hint: "enter message"),
               ),
             ),
-            IconButton.major(
-              icon: Icons.send,
-              onTap: () async {
-                context.showToast("discovering and sending...");
-                var to = await BluetoothService.i.write(
-                  1,
-                  1,
-                  controller.value.text.codeUnits,
-                );
-                controller.clear();
-                context.showToast("message sent to $to");
-              },
+            SizedBox(
+              width: context.rem(3.5),
+              child: Button.major(
+                icon: Icons.send,
+                onTap: isSending ? null : () => send(),
+              ),
             ),
           ].spaced(),
     );

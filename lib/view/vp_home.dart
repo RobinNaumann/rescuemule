@@ -1,3 +1,4 @@
+import 'package:elbe/elbe.dart' as a;
 import 'package:flutter/material.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/service/s_user_service.dart';
@@ -9,7 +10,6 @@ const Color secondary = Color(0xFF212E62);
 const Color warning = Color(0xFFFF1D1D);
 const Color grey = Color(0xFFB2B2B2);
 const Color selected = Color.fromARGB(80, 255, 255, 255);
-
 
 /// Flutter code sample for [Scaffold].
 
@@ -48,18 +48,27 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
     user ??= "Name";
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RescueMule'), 
-        backgroundColor: primary, 
-        shadowColor: grey, 
+        title: const Text('RescueMule'),
+        backgroundColor: primary,
+        shadowColor: grey,
         elevation: 3.0,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Settings',
-            onPressed: () {}
-          ), ], 
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.message_rounded),
+            tooltip: 'messages',
+            onPressed: () {
+              context.push("/msg");
+            },
+          ),
+        ],
       ),
-      body: <Widget>[
+      body:
+          <Widget>[
             /// Home page
             Card(
               shadowColor: Colors.transparent,
@@ -110,7 +119,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                         ),
                       );
                     },
-                  )
+                  ),
                 );
               }
             )] [currentPageIndex],
@@ -126,17 +135,16 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.menu), label: 'Chats'),
         ],
-        backgroundColor: primary
+        backgroundColor: primary,
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-        },
+        onPressed: () {},
         foregroundColor: primary,
         backgroundColor: secondary,
         shape: CircleBorder(),
-        child: const Icon(Icons.add)
-      )
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
