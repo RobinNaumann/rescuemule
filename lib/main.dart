@@ -1,16 +1,17 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/service/s_sending_service.dart';
+import 'package:rescuemule/bit/b_messaging.dart';
 import 'package:rescuemule/view/vp_home.dart';
 import 'package:rescuemule/view/vp_messaging.dart';
 
 const appName = "RescueMule";
 const debugName = "Mac";
 
+final logger = ConsoleLoggerService();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppInfoService.init();
-  SendingService sendingService = SendingService();
-  sendingService.registerListener();
+
   runApp(const YourApp());
 }
 
@@ -25,5 +26,8 @@ class YourApp extends StatelessWidget {
   const YourApp({super.key});
 
   @override
-  Widget build(BuildContext context) => ElbeApp(router: router);
+  Widget build(BuildContext context) => BitProvider(
+    create: (_) => MessagingBit(),
+    child: ElbeApp(router: router),
+  );
 }

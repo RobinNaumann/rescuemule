@@ -1,4 +1,5 @@
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
+import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 
 class Chunker {
@@ -25,7 +26,7 @@ class Chunker {
     for (int i = 0; i < chunks.length; i++) {
       final prefix = i == chunks.length - 1 ? 0 : 1;
       final m = [prefix, ...chunks[i]];
-      print("Sending chunk $i/${chunks.length - 1}");
+      logger.d(Chunker, "Sending chunk $i/${chunks.length - 1}");
       await send(m);
     }
   }
@@ -46,7 +47,7 @@ class Chunker {
       _chunkCaches[deviceId]![charId] = [];
       final handler = findCharacteristicByUUID(_services, variable);
       if (handler.onWrite == null) {
-        print("No write handler for ${variable.toString()}");
+        logger.w(this, "No write handler for ${variable.toString()}");
         return;
       }
 

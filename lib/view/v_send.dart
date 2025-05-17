@@ -22,14 +22,17 @@ class _SendViewState extends State<SendView> {
         message: stringToAscii(controller.value.text),
       );
       if (to.isEmpty) {
+        // ignore: use_build_context_synchronously
         context.showToast("no devices found", icon: Icons.alertTriangle);
         setState(() => isSending = false);
         return;
       }
       controller.clear();
+      // ignore: use_build_context_synchronously
       context.showToast("sent to ${to.length} devices", icon: Icons.check);
       setState(() => isSending = false);
     } catch (e) {
+      // ignore: use_build_context_synchronously
       context.showToast("failed to send message", icon: Icons.alertOctagon);
       setState(() => isSending = false);
     }
