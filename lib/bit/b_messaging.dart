@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/bit/bit/bit_control.dart';
 import 'package:rescuemule/main.dart';
@@ -7,8 +8,15 @@ import 'package:rescuemule/model/m_ble_service.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
 import 'package:rescuemule/service/s_sending_service.dart';
 
+class _Msg {
+  final String message;
+  final UUID device;
+
+  _Msg(this.message, this.device);
+}
+
 class _Data {
-  final List<String> messages;
+  final List<_Msg> messages;
   final List<Peripheral> devices;
 
   _Data(this.messages, this.devices);
@@ -29,10 +37,16 @@ class MessagingBit extends MapMsgBitControl<_Data> {
             variables: [
               BLEVariable(
                 id: 1,
-                onWrite: (_, bytes) {
+                onWrite: (from, bytes) {
                   var d = state.whenOrNull(onData: (d) => d);
                   var msg = String.fromCharCodes(bytes);
-                  emit(_Data([...d?.messages ?? [], msg], d?.devices ?? []));
+                  emit(
+                    _Data([
+                      ...d?.messages ?? [],
+                      _Msg(msg, from),
+                    ], d?.devices ?? []),
+                  );
+                  AudioPlayer().play(AssetSource("sounds/esel_pixabay.mp3"));
                 },
               ),
             ],

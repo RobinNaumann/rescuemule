@@ -1,3 +1,4 @@
+import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/bit/b_messaging.dart';
 
@@ -12,10 +13,34 @@ class MessageList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children:
                 [
-                  for (var message in data.messages)
-                    Card(scheme: ColorSchemes.secondary, child: Text(message)),
+                  for (var m in data.messages)
+                    Card(
+                      scheme: ColorSchemes.secondary,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children:
+                            [
+                              Text(m.message),
+                              Text.bodyS(
+                                "from: ${formatMacFromUUID(m.device)}",
+                                variant: TypeVariants.bold,
+                              ),
+                            ].spaced(),
+                      ),
+                    ),
                 ].spaced(),
           ),
     );
   }
+}
+
+String formatMacFromUUID(UUID uuid) {
+  final macValues = uuid.toString().split("-").last;
+
+  //group into pairs of 2
+  final macPairs = [];
+  for (var i = 0; i < macValues.length; i += 2) {
+    macPairs.add(macValues.substring(i, i + 2));
+  }
+  return macPairs.join(":");
 }
