@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/service/ble/s_ble_peripheral.dart';
+import 'package:rescuemule/service/ble/s_chunking.dart';
 
 class BleCentralManager {
   List<int> services = [];
@@ -24,11 +25,17 @@ class BleCentralManager {
     if (runPlatform.isAndroid) _manager.authorize();
   }
 
-  Future<List<UUID>> write(int service, int variable, List<int> message) async {
+  Future<List<UUID>> write(
+    int service,
+    int variable,
+    List<int> message,
+    List<UUID>? devices,
+  ) async {
     // find the devices
     List<UUID> sentTo = [];
 
     for (var device in _visibles) {
+      if (devices != null && !devices.contains(device.uuid)) continue;
       try {
         await _send(service, variable, device, message);
         sentTo.add(device.uuid);
@@ -61,15 +68,17 @@ class BleCentralManager {
       throw Exception("Characteristic $service-$char not found");
     }
 
-    await _manager.writeCharacteristic(
-      peripheral,
-      gattChar,
-      value: Uint8List.fromList(message),
-      type: GATTCharacteristicWriteType.withResponse,
+    await Chunker.sendChunks(
+      message,
+      (chunk) async => await _manager.writeCharacteristic(
+        peripheral,
+        gattChar,
+        value: Uint8List.fromList(chunk),
+        type: GATTCharacteristicWriteType.withResponse,
+      ),
     );
-
     //await Future.delayed(const Duration(milliseconds: 10));
-    _manager.disconnect(peripheral);
+    await _manager.disconnect(peripheral);
   }
 
   Future<void> _scanContinously() async {

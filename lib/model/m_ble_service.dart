@@ -4,8 +4,8 @@ import 'package:rescuemule/service/ble/s_ble_peripheral.dart';
 class BLEVariable<T> {
   final int id;
   final String? label;
-  final Function(List<int> bytes)? onWrite;
-  final Future<List<int>> Function()? onRead;
+  final Function(UUID origin, List<int> bytes)? onWrite;
+  final Future<List<int>> Function(UUID origin)? onRead;
 
   BLEVariable({required this.id, this.label, this.onWrite, this.onRead});
 
@@ -57,3 +57,13 @@ GATTCharacteristic makeDemoChar(int serviceId, int id, bool write) =>
       ],
       descriptors: [],
     );
+
+BLEVariable findCharacteristicByUUID(List<BLEService> services, UUID uuid) {
+  for (var service in services) {
+    for (var v in service.variables) {
+      final id = makeUUID(service.id, v.id);
+      if (id == uuid) return v;
+    }
+  }
+  throw Exception("Characteristic not found");
+}

@@ -4,6 +4,7 @@ import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/services/s_app_info.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
+import 'package:rescuemule/service/ble/s_chunking.dart';
 
 class BLEPeripheralManager {
   final String appId;
@@ -22,6 +23,7 @@ class BLEPeripheralManager {
   }
 
   Future<void> advertise(List<BLEService> services) async {
+    final chunker = Chunker(services);
     await prepare();
     final ganttS = services.map((s) => s.asGATT()).toList();
 
@@ -31,9 +33,10 @@ class BLEPeripheralManager {
 
     _manager.characteristicReadRequested.listen((state) async {
       final uuid = state.characteristic.uuid;
+      final central = state.central.uuid;
       try {
-        final char = _findCharacteristic(services, uuid);
-        final v = await char.onRead!.call();
+        final char = findCharacteristicByUUID(services, uuid);
+        final v = await char.onRead!.call(central);
         _manager.respondReadRequestWithValue(
           state.request,
           value: Uint8List.fromList(v),
@@ -47,10 +50,11 @@ class BLEPeripheralManager {
     });
 
     _manager.characteristicWriteRequested.listen((state) async {
-      final uuid = state.characteristic.uuid;
+      final char_ = state.characteristic.uuid;
+      final origin = state.central.uuid;
+      final message = state.request.value;
       try {
-        final char = _findCharacteristic(services, uuid);
-        await char.onWrite!.call(state.request.value);
+        chunker.onReceive(origin, char_, message);
         _manager.respondWriteRequest(state.request);
       } catch (e) {
         _manager.respondWriteRequestWithError(
@@ -70,16 +74,6 @@ class BLEPeripheralManager {
 
   Future<void> stopAdvertising() async {
     await _manager.stopAdvertising();
-  }
-
-  BLEVariable _findCharacteristic(List<BLEService> services, UUID uuid) {
-    for (var service in services) {
-      for (var v in service.variables) {
-        final id = makeUUID(service.id, v.id);
-        if (id == uuid) return v;
-      }
-    }
-    throw Exception("Characteristic not found");
   }
 }
 

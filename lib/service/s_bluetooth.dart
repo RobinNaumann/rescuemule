@@ -33,8 +33,9 @@ class BluetoothService {
     required int service,
     required int variable,
     required List<int> message,
+    List<UUID>? devices,
   }) async {
-    return await _cMan.write(service, variable, message);
+    return await _cMan.write(service, variable, message, devices);
   }
 
   Future<void> _advertise() async {

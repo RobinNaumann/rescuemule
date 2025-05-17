@@ -28,8 +28,7 @@ class MessagingBit extends MapMsgBitControl<_Data> {
             variables: [
               BLEVariable(
                 id: 1,
-                onWrite: (bytes) {
-                  print("RECIVED: '${String.fromCharCodes(bytes)}'");
+                onWrite: (_, bytes) {
                   var d = state.whenOrNull(onData: (d) => d);
                   var msg = String.fromCharCodes(bytes);
                   emit(_Data([...d?.messages ?? [], msg], d?.devices ?? []));
