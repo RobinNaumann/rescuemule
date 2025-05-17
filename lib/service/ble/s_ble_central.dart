@@ -2,34 +2,46 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
-import 'package:elbe/services/s_app_info.dart';
+import 'package:elbe/elbe.dart';
 import 'package:rescuemule/service/ble/s_ble_peripheral.dart';
-
-final DEMO_central_service = BleCentralManager();
+import 'package:rescuemule/service/ble/s_chunking.dart';
 
 class BleCentralManager {
+  List<int> services = [];
+  Timer? _checker;
+  List<Peripheral> _visibles = [];
+  final StreamController<List<Peripheral>> _visiblesNotify =
+      StreamController<List<Peripheral>>.broadcast();
+  Stream<List<Peripheral>> get visiblesStream => _visiblesNotify.stream;
+
   final _manager = CentralManager();
 
-  Future<void> _prepare() async {
+  BleCentralManager({required this.services}) {
+    _prepare();
+    _scanContinously();
+  }
+
+  void _prepare() {
     if (runPlatform.isAndroid) _manager.authorize();
   }
 
-  Future<int> writeToService(
+  Future<List<UUID>> write(
     int service,
     int variable,
     List<int> message,
+    List<UUID>? devices,
   ) async {
     // find the devices
-    final devices = await scan([service]);
-    var sentTo = 0;
+    List<UUID> sentTo = [];
 
-    for (var device in devices) {
-      // send the message
+    for (var device in _visibles) {
+      if (devices != null && !devices.contains(device.uuid)) continue;
       try {
         await _send(service, variable, device, message);
-        sentTo++;
+        sentTo.add(device.uuid);
       } catch (e) {
         print("Failed to send to $device");
+        print(e);
       }
     }
     return sentTo;
@@ -41,56 +53,71 @@ class BleCentralManager {
     Peripheral peripheral,
     List<int> message,
   ) async {
-    await _prepare();
-
     final sUUID = makeUUID(service);
     final cUUID = makeUUID(service, char);
 
     await _manager.connect(peripheral);
-    var gatt = await _manager.discoverGATT(peripheral);
 
-    try {
-      await _manager.writeCharacteristic(
-        peripheral,
-        gatt
-            .firstWhere((s) => s.uuid == sUUID)
-            .characteristics
-            .firstWhere((c) => c.uuid == cUUID),
-        value: Uint8List.fromList(message),
-        type: GATTCharacteristicWriteType.withoutResponse,
-      );
-    } catch (e, t) {
-      print("Failed to send to $peripheral");
-      print(e);
-      print(t);
-      rethrow;
+    var gatt = await _manager.discoverGATT(peripheral);
+    var gattChar = gatt
+        .firstWhereOrNull((s) => s.uuid == sUUID)
+        ?.characteristics
+        .firstWhereOrNull((c) => c.uuid == cUUID);
+
+    if (gattChar == null) {
+      throw Exception("Characteristic $service-$char not found");
     }
-    _manager.disconnect(peripheral);
+
+    await Chunker.sendChunks(
+      message,
+      (chunk) async => await _manager.writeCharacteristic(
+        peripheral,
+        gattChar,
+        value: Uint8List.fromList(chunk),
+        type: GATTCharacteristicWriteType.withResponse,
+      ),
+    );
+    //await Future.delayed(const Duration(milliseconds: 10));
+    await _manager.disconnect(peripheral);
   }
 
-  Future<List<Peripheral>> scan(List<int> services) async {
-    await _prepare();
+  Future<void> _scanContinously() async {
+    check() async {
+      final devices = await _scan(services);
+      print("Found ${devices.length} devices");
+      _visibles = devices;
+      _visiblesNotify.add(devices);
+    }
 
+    Timer.periodic(Duration(seconds: 5), (_) => check());
+    check();
+  }
+
+  Future<List<Peripheral>> _scan(List<int> services) async {
     final controller = StreamController<DiscoveredEventArgs>();
 
     _manager.startDiscovery(
       serviceUUIDs: services.map((e) => makeUUID(e)).toList(),
     );
 
-    //TODO: possible memory leak
-    _manager.discovered.listen((event) {
+    var listener = _manager.discovered.listen((event) {
       if (controller.isClosed) return;
       controller.add(event);
     });
 
-    Future.delayed(const Duration(seconds: 4)).then((_) {
+    Future.delayed(const Duration(seconds: 3)).then((_) {
       _manager.stopDiscovery();
       controller.close();
+      listener.cancel();
     });
 
     return (await controller.stream.toList())
         .map((e) => e.peripheral)
         .toSet()
         .toList();
+  }
+
+  void dispose() {
+    _checker?.cancel();
   }
 }
