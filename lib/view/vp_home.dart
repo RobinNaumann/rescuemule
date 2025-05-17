@@ -1,6 +1,8 @@
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
+import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
+import 'package:rescuemule/service/s_message_service.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -26,7 +28,21 @@ class HomePage extends StatelessWidget {
                 label: "scan",
                 onTap: () async {
                   context.showToast("TODO: discover");
-                  //await discover();
+                  MessageService service = MessageService();
+                  
+                  service.clearMessages();
+
+                  Message m1 = Message.createMessage(sender: "jannes",receiver: "ich" , message: "message");
+                  Message m2 = Message.createMessage(sender: "ich", receiver: "jannes", message: "message");
+
+                  service.saveMessage(m1);
+                  service.saveMessage(m2);
+
+                  service.loadMessages().then((result) {
+                    result.forEach((e) {
+                    print(e.toJson());
+                  });
+                  });
                 },
               ),
               Mule(name: "Jonas"),
