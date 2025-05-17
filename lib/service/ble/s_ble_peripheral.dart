@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/services/s_app_info.dart';
+import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 
 class BLEPeripheralManager {
@@ -20,23 +21,11 @@ class BLEPeripheralManager {
     }
   }
 
-  UUID uuid(int service, [int? char]) {
-    if (service > 0xFFFF) throw Exception("ID must fit 4 bytes");
-    if (char != null && char > 0xFFF) throw Exception("char must fit 3 bytes");
 
-    const base = "4a5b-a4c0-f7f5a6c278e2";
-    final appHex = appId.hashCode
-        .toRadixString(16)
-        .padLeft(4, '0')
-        .substring(0, 4);
-    final sHex = service.toRadixString(16).padLeft(4, "0");
-    final cHex = char?.toRadixString(16).padLeft(4, "0") ?? "AAAA";
-    return UUID.fromString("$appHex$sHex-$cHex-$base");
-  }
 
   Future<void> advertise(List<BLEService> services) async {
     await prepare();
-    final ganttS = services.map((s) => s.asGATT(this)).toList();
+    final ganttS = services.map((s) => s.asGATT()).toList();
 
     for (var service in ganttS) {
       await _manager.addService(service);
@@ -88,10 +77,24 @@ class BLEPeripheralManager {
   BLEVariable _findCharacteristic(List<BLEService> services, UUID uuid) {
     for (var service in services) {
       for (var v in service.variables) {
-        final id = this.uuid(service.id, v.id);
+        final id = makeUUID(service.id, v.id);
         if (id == uuid) return v;
       }
     }
     throw Exception("Characteristic not found");
   }
 }
+
+  UUID makeUUID(int service, [int? char]) {
+    if (service > 0xFFFF) throw Exception("ID must fit 4 bytes");
+    if (char != null && char > 0xFFF) throw Exception("char must fit 3 bytes");
+
+    const base = "4a5b-a4c0-f7f5a6c278e2";
+    final appHex = appName.hashCode
+        .toRadixString(16)
+        .padLeft(4, '0')
+        .substring(0, 4);
+    final sHex = service.toRadixString(16).padLeft(4, "0");
+    final cHex = char?.toRadixString(16).padLeft(4, "0") ?? "AAAA";
+    return UUID.fromString("$appHex$sHex-$cHex-$base");
+  }

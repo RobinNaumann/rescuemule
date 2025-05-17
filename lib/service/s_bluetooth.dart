@@ -26,6 +26,7 @@ class BluetoothService {
           onWrite: (v) async {
             messageLog.add(String.fromCharCodes(v));
           },
+          onRead: () async => [0x00, 0xff],
         ),
       ],
     );

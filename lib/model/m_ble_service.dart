@@ -9,9 +9,9 @@ class BLEVariable<T> {
 
   BLEVariable({required this.id, this.label, this.onWrite, this.onRead});
 
-  GATTCharacteristic asGATT(BLEPeripheralManager s, int serviceId) =>
+  GATTCharacteristic asGATT(int serviceId) =>
       GATTCharacteristic.mutable(
-        uuid: s.uuid(serviceId, id),
+        uuid: makeUUID(serviceId, id),
         properties: [
           if (onRead != null) GATTCharacteristicProperty.read,
           if (onWrite != null) GATTCharacteristicProperty.write,
@@ -32,12 +32,12 @@ class BLEService {
 
   BLEService({required this.id, this.label, this.variables = const []});
 
-  GATTService asGATT(BLEPeripheralManager s) {
+  GATTService asGATT() {
     return GATTService(
-      uuid: s.uuid(id),
+      uuid: makeUUID(id),
       isPrimary: true,
       includedServices: [],
-      characteristics: variables.map((v) => v.asGATT(s, id)).toList(),
+      characteristics: variables.map((v) => v.asGATT(id)).toList(),
     );
   }
 }
