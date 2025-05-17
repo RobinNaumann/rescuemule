@@ -39,7 +39,7 @@ class SendingService {
           BluetoothService.i.write(
             service: 1,
             variable: 1, //todo actual values
-            message: message.toString().codeUnits,
+            message: message.toBytes(),
             devices: [device.uuid],
           );
           sentIDsService.addSentID(

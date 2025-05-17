@@ -4,6 +4,7 @@ import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
+import 'package:rescuemule/service/s_user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageService {
@@ -53,6 +54,7 @@ class MessageService {
 
   Future<List<Message>> getMessagesToSend(UUID deviceID) async {
     SentIDsService service = SentIDsService();
+    UserService userService = UserService();
     final List<int> alreadySentIDs = await service.loadSentIDs(deviceID);
 
     List<Message> messages = List.empty(growable: true);
@@ -65,7 +67,7 @@ class MessageService {
     List<Message> messagesToSend = List.empty(growable: true);
     for (var msg in messages) {
       //at this point has to be done for every discovered device
-      if (msg.receiver != debugName &&
+      if (msg.receiver != userService.loadUser() &&
           msg.creationTime.isAfter(
             DateTime.now().subtract(const Duration(days: 2)),
           )) {
@@ -99,12 +101,14 @@ class MessageService {
   }
 
   Future<List<Message>> getMessagesBetweenUsers(String userB) async {
+    UserService userService = UserService();
+    final String? userA = await userService.loadUser();
     final messages = await loadMessages();
     return messages
         .where(
           (msg) =>
-              (msg.sender == "ich" && msg.receiver == userB) ||
-              (msg.sender == userB && msg.receiver == "ich"),
+              (msg.sender ==  userA && msg.receiver == userB) ||
+              (msg.sender == userB && msg.receiver == userA),
         )
         .toList();
   }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 
 class Message {
@@ -46,5 +48,15 @@ class Message {
 
   TextMessage toTextMessage() {
     return TextMessage(id: '$id', authorId: sender, text: message);
+  }
+
+  List<int> toBytes() {
+    return utf8.encode(jsonEncode(toJson()));
+  }
+  
+  factory Message.fromBytes(List<int> bytes) {
+    String jsonString = utf8.decode(bytes);
+    Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    return Message.fromJson(jsonMap);
   }
 }
