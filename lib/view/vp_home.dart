@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rescuemule/main.dart';
+import 'chat.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 const Color primary = Color(0xFF46B4E3);
@@ -22,12 +23,6 @@ class ScaffoldExampleApp extends StatelessWidget {
   }
 }
 
-class Chat {
-  final String name;
-  final String lastMessage;
-  Chat(this.name, this.lastMessage);
-}
-
 class ScaffoldExample extends StatefulWidget {
   const ScaffoldExample({super.key});
 
@@ -37,9 +32,9 @@ class ScaffoldExample extends StatefulWidget {
 
 class _ScaffoldExampleState extends State<ScaffoldExample> {
   int currentPageIndex = 0;
-  final List<Chat> chats = [
-  Chat('Freund 1', 'This is a notification'),
-  Chat('Freund 2', 'Another notification'),
+  final List<MyChat> chats = [
+  MyChat(contact: 'Peter'),
+  MyChat(contact: 'Peter2'),
   // Add more chats here
 ];
 
@@ -77,13 +72,13 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
                     leading: const Icon(Icons.message_sharp),
-                    title: Text(chat.name),
-                    subtitle: Text(chat.lastMessage),
+                    title: Text(chat.contact),
+                    subtitle: Text("Peter ist cool"),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChatDetailPage(chat: chat),
+                          builder: (context) => ChatDetailPage(myChat: chat),
                         ),
                       );
                     },
@@ -139,15 +134,17 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
     );
   }
 }
+
 class ChatDetailPage extends StatelessWidget {
-  final Chat chat;
-  const ChatDetailPage({super.key, required this.chat});
+  final MyChat myChat;
+  ChatDetailPage({super.key, required this.myChat});
+
 
   @override
   Widget build(BuildContext context) {
    return Scaffold(
-      appBar: AppBar(title: Text(chat.name)),
-      body: Center(child: Text('Chat with ${chat.name}\n${chat.lastMessage}')),
+      appBar: AppBar(title: Text(myChat.contact)),
+      body: Center(child: myChat),
     );
   }
 }

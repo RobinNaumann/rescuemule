@@ -25,6 +25,24 @@ class MessageService {
         .map((msgString) => Message.fromJson(jsonDecode(msgString)))
         .toList();
   }
+  Future<List<Message>> loadMessagesForChat(String contact) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> messageStrings = prefs.getStringList(_storageKey) ?? [];
+
+    List<Message> messages = messageStrings
+        .map((msgString) => Message.fromJson(jsonDecode(msgString)))
+        .toList();
+    
+    List<Message> messagesWithContact = List.empty(growable: true);
+
+    for(var message in messages){
+      if(message.receiver == contact || message.sender == contact){
+        messagesWithContact.add(message);
+      }
+    }
+
+    return  messagesWithContact;
+  }
 
   Future<void> clearMessages() async {
     final prefs = await SharedPreferences.getInstance();
