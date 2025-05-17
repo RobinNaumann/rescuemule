@@ -1,8 +1,12 @@
 import 'package:elbe/elbe.dart';
+import 'package:rescuemule/service/s_bluetooth.dart';
+
+const appName = "RescueMule";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppInfoService.init();
+  await BluetoothService.init(appName);
   runApp(const YourApp());
 }
 
@@ -22,7 +26,7 @@ class YourPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    title: "DisasterMule",
+    title: appName,
     child: Padded.all(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -43,8 +47,19 @@ class YourPage extends StatelessWidget {
                   //await discover();
                 },
               ),
+              Mule(name: "Jonas"),
             ].spaced(),
       ),
     ),
   );
+}
+
+class Mule extends StatelessWidget {
+  final String name;
+  const Mule({super.key, this.name = "Unknown Mule"});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text("Hello I'm the mule $name");
+  }
 }

@@ -1,5 +1,5 @@
-import 'package:desastermule/model/m_ble_service.dart';
-import 'package:desastermule/service/ble/s_ble_peripheral.dart';
+import 'package:rescuemule/model/m_ble_service.dart';
+import 'package:rescuemule/service/ble/s_ble_peripheral.dart';
 
 class BluetoothService {
   static BluetoothService? _i;
@@ -12,7 +12,7 @@ class BluetoothService {
     _pMan = BLEPeripheralService(appId);
   }
 
-  static init(String appId) {
+  static Future<void> init(String appId) async {
     if (_i != null) throw Exception("Service already initialized");
     _i = BluetoothService._(appId);
   }

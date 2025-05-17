@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
-import 'package:desastermule/model/m_ble_service.dart';
 import 'package:elbe/services/s_app_info.dart';
+import 'package:rescuemule/model/m_ble_service.dart';
 
 class BLEPeripheralService {
   final String appId;
