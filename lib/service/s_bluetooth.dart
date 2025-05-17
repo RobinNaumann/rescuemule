@@ -6,10 +6,10 @@ class BluetoothService {
   static BluetoothService get i => _i!;
 
   final String appId;
-  late final BLEPeripheralService _pMan;
+  late final BLEPeripheralManager _pMan;
   final List<String> messageLog = [];
   BluetoothService._(this.appId) {
-    _pMan = BLEPeripheralService(appId);
+    _pMan = BLEPeripheralManager(appId);
   }
 
   static Future<void> init(String appId) async {

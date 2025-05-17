@@ -4,11 +4,11 @@ import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/services/s_app_info.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 
-class BLEPeripheralService {
+class BLEPeripheralManager {
   final String appId;
   final _manager = PeripheralManager();
 
-  BLEPeripheralService(this.appId);
+  BLEPeripheralManager(this.appId);
 
   Future<void> prepare() async {
     //request the permission

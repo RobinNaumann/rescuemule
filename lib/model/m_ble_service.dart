@@ -9,7 +9,7 @@ class BLEVariable<T> {
 
   BLEVariable({required this.id, this.label, this.onWrite, this.onRead});
 
-  GATTCharacteristic asGATT(BLEPeripheralService s, int serviceId) =>
+  GATTCharacteristic asGATT(BLEPeripheralManager s, int serviceId) =>
       GATTCharacteristic.mutable(
         uuid: s.uuid(serviceId, id),
         properties: [
@@ -32,7 +32,7 @@ class BLEService {
 
   BLEService({required this.id, this.label, this.variables = const []});
 
-  GATTService asGATT(BLEPeripheralService s) {
+  GATTService asGATT(BLEPeripheralManager s) {
     return GATTService(
       uuid: s.uuid(id),
       isPrimary: true,
