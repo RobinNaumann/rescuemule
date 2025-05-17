@@ -9,20 +9,19 @@ class BLEVariable<T> {
 
   BLEVariable({required this.id, this.label, this.onWrite, this.onRead});
 
-  GATTCharacteristic asGATT(int serviceId) =>
-      GATTCharacteristic.mutable(
-        uuid: makeUUID(serviceId, id),
-        properties: [
-          if (onRead != null) GATTCharacteristicProperty.read,
-          if (onWrite != null) GATTCharacteristicProperty.write,
-        ],
+  GATTCharacteristic asGATT(int serviceId) => GATTCharacteristic.mutable(
+    uuid: makeUUID(serviceId, id),
+    properties: [
+      if (onRead != null) GATTCharacteristicProperty.read,
+      if (onWrite != null) GATTCharacteristicProperty.write,
+    ],
 
-        permissions: [
-          if (onRead != null) GATTCharacteristicPermission.read,
-          if (onWrite != null) GATTCharacteristicPermission.write,
-        ],
-        descriptors: [],
-      );
+    permissions: [
+      if (onRead != null) GATTCharacteristicPermission.read,
+      if (onWrite != null) GATTCharacteristicPermission.write,
+    ],
+    descriptors: [],
+  );
 }
 
 class BLEService {
@@ -41,3 +40,20 @@ class BLEService {
     );
   }
 }
+
+GATTCharacteristic makeDemoChar(int serviceId, int id, bool write) =>
+    GATTCharacteristic.mutable(
+      uuid: makeUUID(serviceId, id),
+      properties: [
+        write
+            ? GATTCharacteristicProperty.write
+            : GATTCharacteristicProperty.read,
+      ],
+
+      permissions: [
+        write
+            ? GATTCharacteristicPermission.write
+            : GATTCharacteristicPermission.read,
+      ],
+      descriptors: [],
+    );

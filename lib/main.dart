@@ -5,6 +5,7 @@ import 'package:rescuemule/service/s_message_service.dart';
 import 'package:rescuemule/view/vp_home.dart';
 
 const appName = "RescueMule";
+const debugName = "Robin";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

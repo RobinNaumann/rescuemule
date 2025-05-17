@@ -21,8 +21,6 @@ class BLEPeripheralManager {
     }
   }
 
-
-
   Future<void> advertise(List<BLEService> services) async {
     await prepare();
     final ganttS = services.map((s) => s.asGATT()).toList();
@@ -64,7 +62,7 @@ class BLEPeripheralManager {
 
     await _manager.startAdvertising(
       Advertisement(
-        name: appId,
+        name: "${appId}_$debugName",
         serviceUUIDs: ganttS.map((s) => s.uuid).toList(),
       ),
     );
@@ -85,16 +83,16 @@ class BLEPeripheralManager {
   }
 }
 
-  UUID makeUUID(int service, [int? char]) {
-    if (service > 0xFFFF) throw Exception("ID must fit 4 bytes");
-    if (char != null && char > 0xFFF) throw Exception("char must fit 3 bytes");
+UUID makeUUID(int service, [int? char]) {
+  if (service > 0xFFFF) throw Exception("ID must fit 4 bytes");
+  if (char != null && char > 0xFFF) throw Exception("char must fit 3 bytes");
 
-    const base = "4a5b-a4c0-f7f5a6c278e2";
-    final appHex = appName.hashCode
-        .toRadixString(16)
-        .padLeft(4, '0')
-        .substring(0, 4);
-    final sHex = service.toRadixString(16).padLeft(4, "0");
-    final cHex = char?.toRadixString(16).padLeft(4, "0") ?? "AAAA";
-    return UUID.fromString("$appHex$sHex-$cHex-$base");
-  }
+  const base = "4a5b-a4c0-f7f5a6c278e2";
+  final appHex = appName.hashCode
+      .toRadixString(16)
+      .padLeft(4, '0')
+      .substring(0, 4);
+  final sHex = service.toRadixString(16).padLeft(4, "0");
+  final cHex = char?.toRadixString(16).padLeft(4, "0") ?? "AAAA";
+  return UUID.fromString("$appHex$sHex-$cHex-$base");
+}
