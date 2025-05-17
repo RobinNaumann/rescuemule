@@ -25,6 +25,7 @@ class Chunker {
     for (int i = 0; i < chunks.length; i++) {
       final prefix = i == chunks.length - 1 ? 0 : 1;
       final m = [prefix, ...chunks[i]];
+      print("Sending chunk $i/${chunks.length - 1}");
       await send(m);
     }
   }
@@ -49,12 +50,10 @@ class Chunker {
         return;
       }
 
-      print("CHUNKER: sending $message");
       handler.onWrite!(origin, m);
       return;
     }
 
-    print("CHUNKER: adding to cache $message");
     _chunkCaches[deviceId]![charId]!.addAll(message.sublist(1));
   }
 }
