@@ -5,6 +5,7 @@ import 'package:elbe/bit/bit/bit_control.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
+import 'package:rescuemule/service/s_sending_service.dart';
 
 class _Data {
   final List<String> messages;
@@ -42,6 +43,7 @@ class MessagingBit extends MapMsgBitControl<_Data> {
         var d = state.whenOrNull(onData: (d) => d);
         emit(_Data(d?.messages ?? [], devices));
       });
+      SendingService().registerListener();
     }
   }
 

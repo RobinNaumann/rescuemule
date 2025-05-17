@@ -1,5 +1,4 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/bit/b_messaging.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/view/v_devices_list.dart';
 import 'package:rescuemule/view/v_message_list.dart';
@@ -9,23 +8,20 @@ class MessagingView extends StatelessWidget {
   const MessagingView({super.key});
 
   @override
-  Widget build(BuildContext context) => BitProvider(
-    create: (_) => MessagingBit(),
-    child: Scaffold(
-      title: appName,
+  Widget build(BuildContext context) => Scaffold(
+    title: appName,
 
-      child: Padded.all(
-        child: ListView(
-          //crossAxisAlignment: CrossAxisAlignment.stretch,
-          children:
-              [
-                Text.h5("send broadcast"),
-                SendView(),
-                DevicesList(),
-                Text.h5("received messages"),
-                MessageList(),
-              ].spaced(),
-        ),
+    child: Padded.all(
+      child: ListView(
+        //crossAxisAlignment: CrossAxisAlignment.stretch,
+        children:
+            [
+              Text.h5("send broadcast"),
+              SendView(),
+              DevicesList(),
+              Text.h5("received messages"),
+              MessageList(),
+            ].spaced(),
       ),
     ),
   );
