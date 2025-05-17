@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_core/flutter_chat_core.dart' show InMemoryChatController, TextMessage, User, UserID;
+import 'package:flutter_chat_core/flutter_chat_core.dart' show InMemoryChatController, User, UserID;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_message_service.dart';
@@ -54,6 +54,20 @@ class MyChatState extends State<MyChat> {
           return User(id: id, name: 'Andi Scheuerl ist 1 Pimmel');
         },
       ),
+    );
+  }
+}
+
+class ChatDetailPage extends StatelessWidget {
+  final MyChat myChat;
+  ChatDetailPage({super.key, required this.myChat});
+
+
+  @override
+  Widget build(BuildContext context) {
+   return Scaffold(
+      appBar: AppBar(title: Text(myChat.contact)),
+      body: Center(child: myChat),
     );
   }
 }

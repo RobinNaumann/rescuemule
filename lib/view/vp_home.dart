@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rescuemule/main.dart';
+import 'package:rescuemule/service/s_user_service.dart';
 import 'chat.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
@@ -40,6 +41,11 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
 
   @override
   Widget build(BuildContext context) {
+    UserService userService = UserService();
+    String? user;
+    userService.loadUser().then((onValue){
+      user = onValue;});
+    user ??= "Name";
     return Scaffold(
       appBar: AppBar(
         title: const Text('RescueMule'), 
@@ -59,7 +65,29 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
               shadowColor: Colors.transparent,
               margin: const EdgeInsets.all(8.0),
               child: SizedBox.expand(
-                child: Center(child: Text('Home page')),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: SizedBox(
+                        width: 200,
+                        child: TextField(
+                          decoration: InputDecoration(
+                            labelText: user,
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                          onSubmitted: (value) => userService.saveUser(value),
+                        ),
+                      ),
+                    ),
+                    // Zentrierter Text
+                    const Center(
+                      child: Text('Home page'),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -87,28 +115,6 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
               }
             )] [currentPageIndex],
 
-
-            ///const Padding(
-            ///  padding: EdgeInsets.all(8.0),
-            ///  child: Column(
-            ///    children: <Widget>[
-            ///      Card(
-            ///        child: ListTile(
-            ///          leading: Icon(Icons.message_sharp),
-            ///          title: Text('Freund 1'),
-            ///          subtitle: Text('This is a notification'),
-            ///        ),
-            ///      ),
-            ///      Card(
-            ///        child: ListTile(
-            ///          leading: Icon(Icons.message_sharp),
-            ///          title: Text('Freund 2'),
-            ///          subtitle: Text('This is a notification'),
-            ///        ),
-            ///      ),
-            ///    ],
-            ///  ),
-            ///)] [currentPageIndex],
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
@@ -131,20 +137,6 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
         shape: CircleBorder(),
         child: const Icon(Icons.add)
       )
-    );
-  }
-}
-
-class ChatDetailPage extends StatelessWidget {
-  final MyChat myChat;
-  ChatDetailPage({super.key, required this.myChat});
-
-
-  @override
-  Widget build(BuildContext context) {
-   return Scaffold(
-      appBar: AppBar(title: Text(myChat.contact)),
-      body: Center(child: myChat),
     );
   }
 }
