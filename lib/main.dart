@@ -9,8 +9,8 @@ const debugName = "Mac";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppInfoService.init();
-  SendingService sendingService = SendingService();
-  sendingService.registerListener();
+  //SendingService sendingService = SendingService();
+  //sendingService.registerListener();
   runApp(const YourApp());
 }
 

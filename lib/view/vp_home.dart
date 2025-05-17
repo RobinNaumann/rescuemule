@@ -32,20 +32,24 @@ class ScaffoldExample extends StatefulWidget {
 }
 
 class _ScaffoldExampleState extends State<ScaffoldExample> {
+  final UserService userService = UserService();
   int currentPageIndex = 0;
   final List<MyChat> chats = [
   MyChat(contact: 'Peter'),
   MyChat(contact: 'Peter2'),
   // Add more chats here
 ];
+  TextEditingController controller = TextEditingController();
+  @override
+  void initState() {
+    userService.loadUser().then((onValue){
+      controller.text = onValue ?? "Name";});
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    UserService userService = UserService();
-    String? user;
-    userService.loadUser().then((onValue){
-      user = onValue;});
-    user ??= "Name";
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('RescueMule'),
@@ -82,8 +86,8 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                       child: SizedBox(
                         width: 200,
                         child: TextField(
+                          controller: controller,
                           decoration: InputDecoration(
-                            labelText: user,
                             border: OutlineInputBorder(),
                             isDense: true,
                           ),

@@ -5,6 +5,7 @@ import 'package:flutter_chat_core/flutter_chat_core.dart' show InMemoryChatContr
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_message_service.dart';
+import 'package:rescuemule/service/s_user_service.dart';
 
 class MyChat extends StatefulWidget {
   final String contact;
@@ -20,8 +21,20 @@ class MyChatState extends State<MyChat> {
   final _chatController = InMemoryChatController();
   final MessageService messageService = MessageService();
   final String contact;
+  final UserService userService =  UserService();
+  String? user;
 
   MyChatState(this.contact);
+
+    
+  @override
+  void initState() {
+    super.initState();
+    userService.loadUser().then((onValue){
+      user = onValue;
+      print(user ?? "dummy");
+    });
+  }
 
   @override
   void dispose() {
@@ -32,7 +45,7 @@ class MyChatState extends State<MyChat> {
   @override
   Widget build(BuildContext context) {
     
-    messageService.loadMessagesForChat(contact).then((messageList){
+    messageService.getMessagesBetweenUsers(contact).then((messageList){
       for (var message in messageList){
         _chatController.insertMessage(message.toTextMessage());
       }
@@ -41,7 +54,7 @@ class MyChatState extends State<MyChat> {
     return Scaffold(
       body: Chat(
         chatController: _chatController,
-        currentUserId: 'ich',
+        currentUserId: user??"dummy",//TODO fix this uggly as shit
         onMessageSend: (text) {
           Message newMessage = Message.createMessage(sender: 'ich', receiver: contact, message: text);
 
