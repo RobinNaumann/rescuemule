@@ -1,17 +1,14 @@
 import 'dart:convert';
-import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
+
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
-import 'package:rescuemule/model/m_user.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
 import 'package:rescuemule/service/s_user_service.dart';
-import 'package:rescuemule/view/v_message_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final messageService = MessageService();
 
 class MessageService {
-
   static const String _storageKey = 'saved_messages';
   //for performance reasons, could use two keys "buffered_messages" and "stored_messages"
   //own messages buffered first, stored if older than 2 days
@@ -20,10 +17,9 @@ class MessageService {
   UserService userService = UserService();
 
   Future<void> saveMessage(Message msg) async {
-
     final prefs = await SharedPreferences.getInstance();
     final List<String> messages = prefs.getStringList(_storageKey) ?? [];
-    if(! await isMessageAlreadySeen(msg)){
+    if (!await isMessageAlreadySeen(msg)) {
       messages.add(jsonEncode(msg.toJson()));
       logger.d(this, 'Message saved: ${msg.id}');
     } else {
@@ -46,7 +42,6 @@ class MessageService {
         .toList();
   }
 
-
   Future<void> clearMessages() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_storageKey);
@@ -59,10 +54,11 @@ class MessageService {
 
     // Remove buffered messages from allMessages
     final bufferedIds = bufferedMessages.map((msg) => msg.id).toSet();
-    final updatedMessages = allMessages
-        .where((msg) => !bufferedIds.contains(msg.id))
-        .map((msg) => jsonEncode(msg.toJson()))
-        .toList();
+    final updatedMessages =
+        allMessages
+            .where((msg) => !bufferedIds.contains(msg.id))
+            .map((msg) => jsonEncode(msg.toJson()))
+            .toList();
 
     await prefs.setStringList(_storageKey, updatedMessages);
   }
@@ -70,11 +66,10 @@ class MessageService {
   Future<List<Message>> getMessagesToSend(String deviceID) async {
     final List<int> alreadySentIDs = await sentIDsService.loadSentIDs(deviceID);
 
-    List<Message> messages = List.empty(growable: true);
-    final result = await loadMessages();
+    List<Message> messages = await loadMessages();
 
-    messages = result.where((msg) => !alreadySentIDs.contains(msg.id)).toList();
-    List<Message> messagesToSend = List.empty(growable: true);
+    //messages = result.where((msg) => !alreadySentIDs.contains(msg.id)).toList();
+    List<Message> messagesToSend = [];
     for (var msg in messages) {
       //at this point has to be done for every discovered device
       if (msg.receiver != await userService.loadUser() &&
@@ -87,15 +82,19 @@ class MessageService {
 
     return messagesToSend;
   }
-  Future<void> removeExpiredMessages() async {
+
+  /*Future<void> removeExpiredMessages() async {
     final prefs = await SharedPreferences.getInstance();
     List<Message> messageList = await loadMessages();
 
     List<int> expiredIDs = List.empty(growable: true);
     //only remove old messages if we dont want to display them, ids can be removed from usermaps anyways
     for (var msg in messageList) {
-      if (msg.creationTime.isBefore(DateTime.now().subtract(const Duration(days: 2)))){
-        if(!( msg.receiver == await userService.loadUser() || msg.sender == await userService.loadUser())){
+      if (msg.creationTime.isBefore(
+        DateTime.now().subtract(const Duration(days: 2)),
+      )) {
+        if (!(msg.receiver == await userService.loadUser() ||
+            msg.sender == await userService.loadUser())) {
           messageList.remove(msg);
         }
         expiredIDs.add(msg.id);
@@ -107,7 +106,7 @@ class MessageService {
     final List<String> updatedMessages =
         messageList.map((msg) => jsonEncode(msg.toJson())).toList();
     await prefs.setStringList(_storageKey, updatedMessages);
-  }
+  }*/
 
   Future<List<Message>> getMessagesBetweenUsers(String userB) async {
     UserService userService = UserService();
@@ -127,9 +126,14 @@ class MessageService {
     final result = await loadMessages();
     final String? currentUser = await userService.loadUser();
 
-    return result.where((msg) =>
-      msg.receiver != currentUser &&
-      msg.creationTime.isAfter(DateTime.now().subtract(const Duration(days: 2)))
-    ).toList();
+    return result
+        .where(
+          (msg) =>
+              msg.receiver != currentUser &&
+              msg.creationTime.isAfter(
+                DateTime.now().subtract(const Duration(days: 2)),
+              ),
+        )
+        .toList();
   }
 }

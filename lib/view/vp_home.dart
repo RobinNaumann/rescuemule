@@ -35,13 +35,12 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
   final UserService userService = UserService();
   int currentPageIndex = 0;
   TextEditingController controller = TextEditingController();
-  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: elbe.Text.h1('RescueMule', variant: elbe.TypeVariants.bold, ),
+        title: elbe.Text.h1('RescueMule', variant: elbe.TypeVariants.bold),
         backgroundColor: primary,
         shadowColor: grey,
         elevation: 3.0,
@@ -62,73 +61,85 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
       ),
       body:
           <Widget>[
-            ExampleBit.builder(onData: (bit, data) => 
-            /// Home page
-           Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Background image
-                    Opacity(
-                      opacity: 0.5,
-                      child:
-                      Image.asset(
-                        'assets/images/background.png',
-                        fit: BoxFit.cover,
-                    ),),
-                    // Foreground widgets
-                    elbe.Padded.all(
-                      value: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [elbe.Card(child: Column(
+            ExampleBit.builder(
+              onData:
+                  (bit, data) =>
+                  /// Home page
+                  Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Background image
+                      Opacity(
+                        opacity: 0.5,
+                        child: Image.asset(
+                          'assets/images/background.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      // Foreground widgets
+                      elbe.Padded.all(
+                        value: 1,
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            elbe.Text("Current name: ${data.user ?? "--"}", variant: elbe.TypeVariants.bold),
-                            TextField(
-                              controller: controller,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                isDense: true,
+                            elbe.Card(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children:
+                                    [
+                                      elbe.Text(
+                                        "Current name: ${data.user ?? "--"}",
+                                        variant: elbe.TypeVariants.bold,
+                                      ),
+                                      TextField(
+                                        controller: controller,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          isDense: true,
+                                        ),
+                                        onSubmitted:
+                                            (value) => bit.setUsername(value),
+                                      ),
+                                    ].spaced(),
                               ),
-                              onSubmitted: (value) => bit.setUsername(value)
                             ),
-                          ].spaced(),
-                        ), ) ]
-                      ), 
-                    ),
-                    // Add more widgets here if needed
-                  ],
-                
-              
-            ),
+                          ],
+                        ),
+                      ),
+                      // Add more widgets here if needed
+                    ],
+                  ),
             ),
 
             /// Chats page
-            ExampleBit.builder(onData: (bit, data) =>
-            ListView(
-              children: [
-                for(String contact in data.contacts)
-              Card(
-                  margin: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.message_sharp),
-                    title: Text(contact),
-                    subtitle: Text("Peter ist cool"),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatDetailPage(myChat: MyChat(contact: contact)),
+            ExampleBit.builder(
+              onData:
+                  (bit, data) => ListView(
+                    children: [
+                      for (String contact in data.contacts)
+                        Card(
+                          margin: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            leading: const Icon(Icons.message_sharp),
+                            title: Text(contact),
+                            subtitle: Text("Peter ist cool"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => ChatDetailPage(
+                                        myChat: MyChat(contact: contact),
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      );
-                    },
+                    ],
                   ),
-                )
-              ]
             ),
-            )
           ][currentPageIndex],
-    
 
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -148,9 +159,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => ChatExampleApp()
-            ),
+            MaterialPageRoute(builder: (context) => ChatExampleApp()),
           );
           setState(() {});
         },
