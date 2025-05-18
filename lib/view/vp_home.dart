@@ -40,7 +40,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: elbe.Text.h1('RescueMule', variant: elbe.TypeVariants.bold),
+        title: elbe.Text.h1('RescueMule 2', variant: elbe.TypeVariants.bold),
         backgroundColor: primary,
         shadowColor: grey,
         elevation: 3.0,
