@@ -1,4 +1,4 @@
-import 'package:elbe/elbe.dart' as a;
+import 'package:elbe/elbe.dart' as elbe;
 import 'package:flutter/material.dart';
 import 'package:rescuemule/bit/b_example.dart';
 import 'package:rescuemule/service/s_user_service.dart';
@@ -41,7 +41,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RescueMule'),
+        title: elbe.Text.h1('RescueMule', variant: elbe.TypeVariants.bold, ),
         backgroundColor: primary,
         shadowColor: grey,
         elevation: 3.0,
@@ -68,20 +68,22 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                   fit: StackFit.expand,
                   children: [
                     // Background image
-                    Image.asset(
+                    Opacity(
+                      opacity: 0.5,
+                      child:
+                      Image.asset(
                         'assets/images/background.png',
                         fit: BoxFit.cover,
-                      
-                    ),
+                    ),),
                     // Foreground widgets
-                    Positioned(
-                      top: 8,
-                      left: 8,
-                      child: SizedBox(
-                        width: 200,
-                        child: a.Column(
+                    elbe.Padded.all(
+                      value: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [elbe.Card(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text("current name: ${data.user ?? "--"}"),
+                            elbe.Text("Current name: ${data.user ?? "--"}", variant: elbe.TypeVariants.bold),
                             TextField(
                               controller: controller,
                               decoration: InputDecoration(
@@ -91,8 +93,8 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                               onSubmitted: (value) => bit.setUsername(value)
                             ),
                           ].spaced(),
-                        ),
-                      ),
+                        ), ) ]
+                      ), 
                     ),
                     // Add more widgets here if needed
                   ],
@@ -136,7 +138,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
         },
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home hello'),
+          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.menu), label: 'Chats'),
         ],
         backgroundColor: primary,
