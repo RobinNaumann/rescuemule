@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:elbe/elbe.dart';
+import 'package:flutter/material.dart' as m;
 import 'package:flutter_chat_core/flutter_chat_core.dart'
     show InMemoryChatController, User, UserID;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:rescuemule/bit/b_example.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_message_service.dart';
 import 'package:rescuemule/service/s_user_service.dart';
-import 'package:rescuemule/view/vp_home.dart';
 
 class MyChat extends StatefulWidget {
   final String contact;
@@ -18,6 +19,7 @@ class MyChat extends StatefulWidget {
 
 class MyChatState extends State<MyChat> {
   final _chatController = InMemoryChatController();
+  final MessageService messageService = MessageService();
   final String contact;
   final UserService userService =  UserService();
   String? user;
@@ -51,7 +53,7 @@ class MyChatState extends State<MyChat> {
         _chatController.insertMessage(message.toTextMessage());
       }
     });
-    return Scaffold(
+    return m.Scaffold(
       body: Chat(
         chatController: _chatController,
         currentUserId: user??"dummy3",//TODO fix this uggly as shit
@@ -80,20 +82,36 @@ class ChatDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return m.Scaffold(
       appBar: AppBar(title: Text(myChat.contact)),
       body: Center(child: myChat),
     );
   }
 }
 
-class _ChatExampleState extends State<ScaffoldExample> {
+class ChatExampleApp extends StatelessWidget {
+  const ChatExampleApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: ChatExample());
+  }
+}
+
+class ChatExample extends StatefulWidget {
+  const ChatExample({super.key});
+
+  @override
+  State<ChatExample> createState() => _ChatExampleState();
+}
+
+class _ChatExampleState extends State<ChatExample> {
   TextEditingController controller = TextEditingController();
   UserService userService = UserService();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return m.Scaffold(
       appBar: AppBar(title: Text("Neuer Chat")),
       body: Center(
         child: SizedBox(
@@ -106,7 +124,7 @@ class _ChatExampleState extends State<ScaffoldExample> {
                 isDense: true,
               ),
               onSubmitted: (value){
-                userService.saveContact(value);
+                context.bit<ExampleBit>().addContact(value);
               }
             ),
         ),

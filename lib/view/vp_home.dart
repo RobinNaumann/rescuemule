@@ -1,5 +1,6 @@
 import 'package:elbe/elbe.dart' as a;
 import 'package:flutter/material.dart';
+import 'package:rescuemule/bit/b_example.dart';
 import 'package:rescuemule/service/s_user_service.dart';
 
 import 'chat.dart';
@@ -33,28 +34,8 @@ class ScaffoldExample extends StatefulWidget {
 class _ScaffoldExampleState extends State<ScaffoldExample> {
   final UserService userService = UserService();
   int currentPageIndex = 0;
-  List<String> contacts = List.empty(growable: true);
-  final List<MyChat> chats = List.empty(growable: true);
   TextEditingController controller = TextEditingController();
-  @override
-  void initState() {
-    userService.loadUser().then((onValue){
-      controller.text = onValue ?? "Name";});
-    super.initState();
-    userService.loadContacts().then((onValue){
-      setState(() {
-        contacts = onValue;
-        for(var contact in contacts){
-          chats.add(MyChat(contact: contact));
-        }
-      });
-    });
-  }
-
-  refresh(){
-    chats.clear();
-    initState();
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +62,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
       ),
       body:
           <Widget>[
+            ExampleBit.builder(onData: (bit, data) => 
             /// Home page
             Card(
               shadowColor: Colors.transparent,
@@ -93,13 +75,18 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                       left: 8,
                       child: SizedBox(
                         width: 200,
-                        child: TextField(
-                          controller: controller,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            isDense: true,
-                          ),
-                          onSubmitted: (value) => userService.saveUser(value),
+                        child: a.Column(
+                          children: [
+                            Text("current name: ${data.user ?? "--"}"),
+                            TextField(
+                              controller: controller,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                isDense: true,
+                              ),
+                              onSubmitted: (value) => bit.setUsername(value)
+                            ),
+                          ].spaced(),
                         ),
                       ),
                     ),
@@ -109,31 +96,34 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                 ),
               ),
             ),
+            ),
 
             /// Chats page
-            ListView.builder(
-              itemCount: chats.length,
-              itemBuilder: (context, index) {
-                final chat = chats[index];
-                return Card(
+            ExampleBit.builder(onData: (bit, data) =>
+            ListView(
+              children: [
+                for(String contact in data.contacts)
+              Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
                     leading: const Icon(Icons.message_sharp),
-                    title: Text(chat.contact),
+                    title: Text(contact),
                     subtitle: Text("Peter ist cool"),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChatDetailPage(myChat: chat),
+                          builder: (context) => ChatDetailPage(myChat: MyChat(contact: contact)),
                         ),
                       );
                     },
                   ),
-                );
-              },
+                )
+              ]
             ),
+            )
           ][currentPageIndex],
+    
 
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {

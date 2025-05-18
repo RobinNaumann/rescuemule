@@ -1,3 +1,5 @@
+import 'package:elbe/bit/bit/bit.dart';
+import 'package:rescuemule/bit/b_example.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // abstract class Subscriber{
 //   void message();
@@ -33,7 +35,6 @@ class UserService {
   }
 
   Future<void> saveContact(String contact) async {
-
     final prefs = await SharedPreferences.getInstance();
     final List<String> contacts = prefs.getStringList(_contactsKey) ?? [];
     contacts.add(contact);
