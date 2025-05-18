@@ -9,14 +9,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 final messageService = MessageService();
 
 class MessageService {
+
   static const String _storageKey = 'saved_messages';
+  //for performance reasons, could use two keys "buffered_messages" and "stored_messages"
+  //own messages buffered first, stored if older than 2 days
+  //other messages only buffered
+  //messages with us as receiver are stored
+  UserService userService = UserService();
 
   Future<void> saveMessage(Message msg) async {
     final prefs = await SharedPreferences.getInstance();
     final List<String> messages = prefs.getStringList(_storageKey) ?? [];
-
-    messages.add(jsonEncode(msg.toJson()));
+    if(! await isMessageAlreadySeen(msg)){
+      messages.add(jsonEncode(msg.toJson()));
+    }
     await prefs.setStringList(_storageKey, messages);
+  }
+
+  Future<bool> isMessageAlreadySeen(Message msg) async {
+    final messages = await loadMessages();
+    return messages.any((savedMsg) => savedMsg.id == msg.id);
   }
 
   Future<List<Message>> loadMessages() async {
@@ -54,9 +66,7 @@ class MessageService {
   }
 
   Future<List<Message>> getMessagesToSend(UUID deviceID) async {
-    SentIDsService service = SentIDsService();
-    UserService userService = UserService();
-    final List<int> alreadySentIDs = await service.loadSentIDs(deviceID);
+    final List<int> alreadySentIDs = await sentIDsService.loadSentIDs(deviceID);
 
     List<Message> messages = List.empty(growable: true);
     final result = await loadMessages();
@@ -65,7 +75,7 @@ class MessageService {
     List<Message> messagesToSend = List.empty(growable: true);
     for (var msg in messages) {
       //at this point has to be done for every discovered device
-      if (msg.receiver != userService.loadUser() &&
+      if (msg.receiver != await userService.loadUser() &&
           msg.creationTime.isAfter(
             DateTime.now().subtract(const Duration(days: 2)),
           )) {
@@ -81,10 +91,10 @@ class MessageService {
     List<Message> messageList = await loadMessages();
 
     List<int> expiredIDs = List.empty(growable: true);
+    //only remove old messages if we dont want to display them, ids could be removed from usermaps anyways, would need different check
     for (var msg in messageList) {
-      if (msg.creationTime.isBefore(
-        DateTime.now().subtract(const Duration(days: 2)),
-      )) {
+      if (msg.creationTime.isBefore(DateTime.now().subtract(const Duration(days: 2)))&&!( msg.receiver == await userService.loadUser() || msg.sender == await userService.loadUser())
+      ) {
         expiredIDs.add(msg.id);
         messageList.remove(msg);
       }

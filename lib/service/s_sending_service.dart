@@ -9,22 +9,17 @@ import 'package:rescuemule/service/s_message_service.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
 
 class SendingService {
-  final MessageService _messageService = MessageService();
-
   Future<void> registerListener() async {
     BluetoothService.i.devices.listen((devices) {
-      // This will be called whenever the list of devices changes
-      //print('Devices: $devices');
       check(devices);
     });
   }
 
   Future<void> check(List<Peripheral> devices) async {
-    SentIDsService sentIDsService = SentIDsService();
     HashMap<Peripheral, List<Message>> deviceMessageMap = HashMap();
 
     for (var device in devices) {
-      final msgs = await _messageService.getMessagesToSend(device.uuid);
+      final msgs = await messageService.getMessagesToSend(device.uuid);
       deviceMessageMap[device] = msgs;
 
       for (var message in msgs) {

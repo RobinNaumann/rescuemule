@@ -17,7 +17,6 @@ class MyChat extends StatefulWidget {
 
 class MyChatState extends State<MyChat> {
   final _chatController = InMemoryChatController();
-  final MessageService messageService = MessageService();
   final String contact;
   final UserService userService =  UserService();
   String? user;

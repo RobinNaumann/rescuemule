@@ -9,6 +9,7 @@ import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
 import 'package:rescuemule/service/s_message_service.dart';
 import 'package:rescuemule/service/s_sending_service.dart';
+import 'package:rescuemule/service/s_sent_ids_service.dart';
 import 'package:rescuemule/view/v_message_list.dart';
 
 class _Msg {
@@ -52,7 +53,8 @@ class MessagingBit extends MapMsgBitControl<_Data> {
                     ], d?.devices ?? []),
                   );
                   AudioPlayer().play(AssetSource("sounds/esel_pixabay.mp3"));
-
+                  //save message as sent to previous hops
+                  sentIDsService.saveMessageIdForHops(message);
                   // Save the message to the local storage for relay
                   messageService.saveMessage(message);
                 },
