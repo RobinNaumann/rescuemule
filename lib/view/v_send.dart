@@ -26,6 +26,7 @@ class _SendViewState extends State<SendView> {
           creationTime: DateTime.now(),
         ),
       );
+      controller.clear();
 
       /*setState(() => isSending = true);
       var to = await BluetoothService.i.write(
