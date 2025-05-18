@@ -1,6 +1,8 @@
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/bit/b_example.dart';
 import 'package:rescuemule/bit/b_messaging.dart';
+import 'package:rescuemule/model/m_user.dart';
+import 'package:rescuemule/service/s_user_service.dart';
 import 'package:rescuemule/view/vp_home.dart';
 import 'package:rescuemule/view/vp_messaging.dart';
 

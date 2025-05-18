@@ -1,4 +1,18 @@
 import 'package:shared_preferences/shared_preferences.dart';
+// abstract class Subscriber{
+//   void message();
+// }
+// class Subscribable{
+//   List<Subscriber> subscribers = [];
+//   void subscribe(Subscriber subscriber){
+//     subscribers.add(subscriber);
+//   }
+//   void publish(){
+//     for(var subscriber in subscribers){
+//       subscriber.message();
+//     }
+//   }
+// }
 
 class UserService {
   static const String _userKey = 'saved_user';
@@ -22,9 +36,8 @@ class UserService {
 
     final prefs = await SharedPreferences.getInstance();
     final List<String> contacts = prefs.getStringList(_contactsKey) ?? [];
-
     contacts.add(contact);
-    await prefs.setStringList(_contactsKey, contacts);
+    await prefs.setStringList(_contactsKey, contacts.toSet().toList());
   }
 
   Future<List<String>> loadContacts() async {

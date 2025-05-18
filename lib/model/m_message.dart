@@ -52,6 +52,7 @@ class Message {
   int get id => (sender + receiver + creationTime.toString()).hashCode;
 
   TextMessage toTextMessage() {
+    print("sender " + sender);
     return TextMessage(id: '$id', authorId: sender, text: message);
   }
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:rescuemule/model/m_message.dart';
+import 'package:rescuemule/model/m_user.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
 import 'package:rescuemule/service/s_user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +18,7 @@ class MessageService {
   UserService userService = UserService();
 
   Future<void> saveMessage(Message msg) async {
+
     final prefs = await SharedPreferences.getInstance();
     final List<String> messages = prefs.getStringList(_storageKey) ?? [];
     if(! await isMessageAlreadySeen(msg)){
@@ -40,25 +41,6 @@ class MessageService {
         .toList();
   }
 
-  Future<List<Message>> loadMessagesForChat(String contact) async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String> messageStrings = prefs.getStringList(_storageKey) ?? [];
-
-    List<Message> messages =
-        messageStrings
-            .map((msgString) => Message.fromJson(jsonDecode(msgString)))
-            .toList();
-
-    List<Message> messagesWithContact = List.empty(growable: true);
-
-    for (var message in messages) {
-      if (message.receiver == contact || message.sender == contact) {
-        messagesWithContact.add(message);
-      }
-    }
-
-    return messagesWithContact;
-  }
 
   Future<void> clearMessages() async {
     final prefs = await SharedPreferences.getInstance();
@@ -85,7 +67,6 @@ class MessageService {
 
     return messagesToSend;
   }
-
   Future<void> removeExpiredMessages() async {
     final prefs = await SharedPreferences.getInstance();
     List<Message> messageList = await loadMessages();
