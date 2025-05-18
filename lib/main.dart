@@ -1,4 +1,5 @@
 import 'package:elbe/elbe.dart';
+import 'package:rescuemule/bit/b_example.dart';
 import 'package:rescuemule/bit/b_messaging.dart';
 import 'package:rescuemule/view/vp_home.dart';
 import 'package:rescuemule/view/vp_messaging.dart';
@@ -27,7 +28,10 @@ class YourApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BitProvider(
-    create: (_) => MessagingBit(),
-    child: ElbeApp(router: router, debugShowCheckedModeBanner: false),
+    create: (_) => ExampleBit(),
+    child: BitProvider(
+      create: (_) => MessagingBit(),
+      child: ElbeApp(router: router, debugShowCheckedModeBanner: false),
+    ),
   );
 }

@@ -1,4 +1,5 @@
 import 'package:elbe/elbe.dart';
+import 'package:rescuemule/bit/b_example.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_message_service.dart';
 import 'package:rescuemule/service/s_user_service.dart';
@@ -53,23 +54,31 @@ class _SendViewState extends State<SendView> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children:
-          [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                decoration: elbeFieldDeco(context, hint: "enter message"),
-              ),
-            ),
-            SizedBox(
-              width: context.rem(3.5),
-              child: Button.major(
-                icon: Icons.send,
-                onTap: isSending ? null : () => send(),
-              ),
-            ),
-          ].spaced(),
+    return ExampleBit.builder(
+      onData:
+          (bit, data) => Row(
+            children:
+                [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      decoration: elbeFieldDeco(context, hint: "enter message"),
+                    ),
+                  ),
+                  SizedBox(
+                    width: context.rem(3.5),
+                    child: Button.major(
+                      icon: Icons.send,
+                      onTap: isSending ? null : () => send(),
+                    ),
+                  ),
+                  Text(data),
+                  Button.major(
+                    label: "add an a",
+                    onTap: () => bit.emit(data + "a"),
+                  ),
+                ].spaced(),
+          ),
     );
   }
 }
