@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
+import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
 import 'package:rescuemule/service/s_user_service.dart';
+import 'package:rescuemule/view/v_message_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final messageService = MessageService();
@@ -22,6 +24,9 @@ class MessageService {
     final List<String> messages = prefs.getStringList(_storageKey) ?? [];
     if(! await isMessageAlreadySeen(msg)){
       messages.add(jsonEncode(msg.toJson()));
+      logger.d(this, 'Message saved: ${msg.id}');
+    } else {
+      logger.d(this, 'Message already seen: ${msg.id}');
     }
     await prefs.setStringList(_storageKey, messages);
   }
@@ -80,7 +85,7 @@ class MessageService {
     await prefs.setStringList(_storageKey, updatedMessages);
   }
 
-  Future<List<Message>> getMessagesToSend(UUID deviceID) async {
+  Future<List<Message>> getMessagesToSend(String deviceID) async {
     final List<int> alreadySentIDs = await sentIDsService.loadSentIDs(deviceID);
 
     List<Message> messages = List.empty(growable: true);

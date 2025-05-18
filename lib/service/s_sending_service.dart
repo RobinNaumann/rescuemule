@@ -7,7 +7,9 @@ import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
 import 'package:rescuemule/service/s_message_service.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
+import 'package:rescuemule/view/v_message_list.dart';
 
+final sendingService = SendingService();
 class SendingService {
   Future<void> registerListener() async {
     BluetoothService.i.devices.listen((devices) {
@@ -16,16 +18,17 @@ class SendingService {
   }
 
   Future<void> check(List<Peripheral> devices) async {
+    await messageService.removeExpiredMessages();
     HashMap<Peripheral, List<Message>> deviceMessageMap = HashMap();
 
     for (var device in devices) {
-      final msgs = await messageService.getMessagesToSend(device.uuid);
+      final msgs = await messageService.getMessagesToSend(formatMacFromUUID(device.uuid));
       deviceMessageMap[device] = msgs;
 
       for (var message in msgs) {
         logger.d(
           this,
-          'Message: ${message.id} to device: ${device.uuid} needs to be sent',
+          'Message: ${message.id} to device: ${formatMacFromUUID(device.uuid)} needs to be sent',
         );
       }
     }
@@ -44,16 +47,16 @@ class SendingService {
             devices: [device.uuid],
           );
           sentIDsService.addSentID(
-            device.uuid,
+            formatMacFromUUID( device.uuid ),
             message.id,
           ); //acknowledge that messsage was sent
           logger.d(
             this,
-            'Sending message: ${message.id} to device: ${device.uuid}',
+            'Sending message: ${message.id} to device: ${formatMacFromUUID(device.uuid)}',
           );
         }
       } else {
-        logger.d(this, 'No messages to send to device: ${device.uuid}');
+        logger.d(this, 'No messages to send to device: ${formatMacFromUUID(device.uuid)}');
       }
     }
   }
