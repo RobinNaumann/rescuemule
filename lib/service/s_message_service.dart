@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
+import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/model/m_user.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
 import 'package:rescuemule/service/s_user_service.dart';
+import 'package:rescuemule/view/v_message_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final messageService = MessageService();
@@ -23,6 +25,9 @@ class MessageService {
     final List<String> messages = prefs.getStringList(_storageKey) ?? [];
     if(! await isMessageAlreadySeen(msg)){
       messages.add(jsonEncode(msg.toJson()));
+      logger.d(this, 'Message saved: ${msg.id}');
+    } else {
+      logger.d(this, 'Message already seen: ${msg.id}');
     }
     await prefs.setStringList(_storageKey, messages);
   }
@@ -47,7 +52,22 @@ class MessageService {
     await prefs.remove(_storageKey);
   }
 
-  Future<List<Message>> getMessagesToSend(UUID deviceID) async {
+  Future<void> clearBuffer() async {
+    final prefs = await SharedPreferences.getInstance();
+    final allMessages = await loadMessages();
+    final bufferedMessages = await getBufferedMessages();
+
+    // Remove buffered messages from allMessages
+    final bufferedIds = bufferedMessages.map((msg) => msg.id).toSet();
+    final updatedMessages = allMessages
+        .where((msg) => !bufferedIds.contains(msg.id))
+        .map((msg) => jsonEncode(msg.toJson()))
+        .toList();
+
+    await prefs.setStringList(_storageKey, updatedMessages);
+  }
+
+  Future<List<Message>> getMessagesToSend(String deviceID) async {
     final List<int> alreadySentIDs = await sentIDsService.loadSentIDs(deviceID);
 
     List<Message> messages = List.empty(growable: true);
@@ -72,17 +92,17 @@ class MessageService {
     List<Message> messageList = await loadMessages();
 
     List<int> expiredIDs = List.empty(growable: true);
-    //only remove old messages if we dont want to display them, ids could be removed from usermaps anyways, would need different check
+    //only remove old messages if we dont want to display them, ids can be removed from usermaps anyways
     for (var msg in messageList) {
-      if (msg.creationTime.isBefore(DateTime.now().subtract(const Duration(days: 2)))&&!( msg.receiver == await userService.loadUser() || msg.sender == await userService.loadUser())
-      ) {
+      if (msg.creationTime.isBefore(DateTime.now().subtract(const Duration(days: 2)))){
+        if(!( msg.receiver == await userService.loadUser() || msg.sender == await userService.loadUser())){
+          messageList.remove(msg);
+        }
         expiredIDs.add(msg.id);
-        messageList.remove(msg);
       }
     }
     for (var id in expiredIDs) {
-      SentIDsService service = SentIDsService();
-      service.removeExpiredID(id);
+      sentIDsService.removeExpiredID(id);
     }
     final List<String> updatedMessages =
         messageList.map((msg) => jsonEncode(msg.toJson())).toList();
@@ -100,5 +120,16 @@ class MessageService {
               (msg.sender == userB && msg.receiver == userA),
         )
         .toList();
+  }
+
+  /// Returns all messages that would be sent (like getMessagesToSend) but without filtering by device.
+  Future<List<Message>> getBufferedMessages() async {
+    final result = await loadMessages();
+    final String? currentUser = await userService.loadUser();
+
+    return result.where((msg) =>
+      msg.receiver != currentUser &&
+      msg.creationTime.isAfter(DateTime.now().subtract(const Duration(days: 2)))
+    ).toList();
   }
 }

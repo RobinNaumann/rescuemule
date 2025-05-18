@@ -76,8 +76,9 @@ class MessagingBit extends MapMsgBitControl<_Data> {
         var d = state.whenOrNull(onData: (d) => d);
         emit(_Data(d?.messages ?? [], devices));
       });
-      SendingService().registerListener();
-  }}
+      sendingService.registerListener();
+    }
+  }
 
   @override
   void dispose() {
