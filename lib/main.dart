@@ -33,7 +33,9 @@ class YourApp extends StatelessWidget {
     create: (_) => ExampleBit(),
     child: BitProvider(
       create: (_) => MessagingBit(),
-      child: ElbeApp(router: router, debugShowCheckedModeBanner: false),
+      child: 
+      MessagingBit.builder(onData: (_, __) =>
+      ElbeApp(router: router, debugShowCheckedModeBanner: false)),
     ),
   );
 }

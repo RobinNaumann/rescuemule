@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'package:elbe/elbe.dart';
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 
-class Message {
+class Message extends JsonModel{
   final String sender;
   final String receiver;
   final String message;
@@ -41,6 +42,8 @@ class Message {
     'hops': hops,
   };
 
+  get map => toJson();
+
   factory Message.fromJson(Map<String, dynamic> json) => Message(
     sender: json['sender'],
     receiver: json['receiver'],
@@ -75,4 +78,5 @@ class Message {
       hops: [...hops, hop],
     );
   }
+
 }

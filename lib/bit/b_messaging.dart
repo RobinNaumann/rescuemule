@@ -27,11 +27,19 @@ class _Data {
 }
 
 class MessagingBit extends MapMsgBitControl<_Data> {
+  static StreamController<Message> msgStream = StreamController.broadcast();
+
   StreamSubscription? _visibles;
   static const builder = MapMsgBitBuilder<_Data, MessagingBit>.make;
 
   MessagingBit() : super.worker((_) async => _Data([], [])) {
+      _init();
+    }
+  
+
+  void _init() async {
     if (!BluetoothService.isInitialized) {
+      await Future.delayed(Duration(seconds: 2));
       BluetoothService.init(
         appId: appName,
         services: [1],
@@ -57,6 +65,7 @@ class MessagingBit extends MapMsgBitControl<_Data> {
                   sentIDsService.saveMessageIdForHops(message);
                   // Save the message to the local storage for relay
                   messageService.saveMessage(message);
+                  msgStream.add(message);
                 },
               ),
             ],
@@ -68,8 +77,7 @@ class MessagingBit extends MapMsgBitControl<_Data> {
         emit(_Data(d?.messages ?? [], devices));
       });
       SendingService().registerListener();
-    }
-  }
+  }}
 
   @override
   void dispose() {
