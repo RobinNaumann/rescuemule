@@ -42,10 +42,8 @@ flutter_icons:
   image_path: "assets/images/appicon.png"
 
 flutter_native_splash:
-  color: "#000000"
+  color: "#ffffff"
   image: assets/images/flashscreen.png 
   android: true
   ios: true
   fullscreen: true
-  web_image_mode: center
-  fit: BoxFit.cover
