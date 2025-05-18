@@ -24,6 +24,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   change_app_package_name: ^1.5.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
 
   flutter_lints: ^5.0.0
 
@@ -32,3 +34,18 @@ flutter:
 
   assets:
     - assets/sounds/esel_pixabay.mp3
+    - assets/images/background.png
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/appicon.png"
+
+flutter_native_splash:
+  color: "#000000"
+  image: assets/images/flashscreen.png 
+  android: true
+  ios: true
+  fullscreen: true
+  web_image_mode: center
+  fit: BoxFit.cover

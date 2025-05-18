@@ -67,9 +67,17 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
             Card(
               shadowColor: Colors.transparent,
               margin: const EdgeInsets.all(8.0),
-              child: SizedBox.expand(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height,
                 child: Stack(
+                  fit: StackFit.expand,
                   children: [
+                    // Background image
+                    Image.asset(
+                      'assets/background.png',
+                      fit: BoxFit.cover,
+                    ),
+                    // Foreground widgets
                     Positioned(
                       top: 8,
                       left: 8,
@@ -90,8 +98,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                         ),
                       ),
                     ),
-                    // Zentrierter Text
-                    const Center(child: Text('Home page')),
+                    // Add more widgets here if needed
                   ],
                 ),
               ),
