@@ -72,11 +72,11 @@ class _SendViewState extends State<SendView> {
                       onTap: isSending ? null : () => send(),
                     ),
                   ),
-                  Text(data),
+                  /*Text(data),
                   Button.major(
                     label: "add an a",
                     onTap: () => bit.emit(data + "a"),
-                  ),
+                  ),*/
                 ].spaced(),
           ),
     );
