@@ -28,6 +28,6 @@ class YourApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BitProvider(
     create: (_) => MessagingBit(),
-    child: ElbeApp(router: router),
+    child: ElbeApp(router: router, debugShowCheckedModeBanner: false),
   );
 }
