@@ -64,18 +64,14 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
           <Widget>[
             ExampleBit.builder(onData: (bit, data) => 
             /// Home page
-            Card(
-              shadowColor: Colors.transparent,
-              margin: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Stack(
+           Stack(
                   fit: StackFit.expand,
                   children: [
                     // Background image
                     Image.asset(
-                      'assets/background.png',
-                      fit: BoxFit.cover,
+                        'assets/images/background.png',
+                        fit: BoxFit.cover,
+                      
                     ),
                     // Foreground widgets
                     Positioned(
@@ -100,8 +96,8 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
                     ),
                     // Add more widgets here if needed
                   ],
-                ),
-              ),
+                
+              
             ),
             ),
 
@@ -140,7 +136,7 @@ class _ScaffoldExampleState extends State<ScaffoldExample> {
         },
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.home), label: 'Home hello'),
           NavigationDestination(icon: Icon(Icons.menu), label: 'Chats'),
         ],
         backgroundColor: primary,

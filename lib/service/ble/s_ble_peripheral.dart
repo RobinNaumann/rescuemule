@@ -28,7 +28,12 @@ class BLEPeripheralManager {
     final ganttS = services.map((s) => s.asGATT()).toList();
 
     for (var service in ganttS) {
+      try{
       await _manager.addService(service);
+      } catch (e)
+      {
+        logger.w(this, "Failed to add service ${service.uuid}", e);
+      }
     }
 
     _manager.characteristicReadRequested.listen((state) async {
