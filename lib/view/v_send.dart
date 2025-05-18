@@ -1,5 +1,7 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/service/s_bluetooth.dart';
+import 'package:rescuemule/model/m_message.dart';
+import 'package:rescuemule/service/s_message_service.dart';
+import 'package:rescuemule/service/s_user_service.dart';
 
 class SendView extends StatefulWidget {
   const SendView({super.key});
@@ -15,7 +17,17 @@ class _SendViewState extends State<SendView> {
   void send() async {
     if (isSending) return;
     try {
-      setState(() => isSending = true);
+      context.showToast("trying to send...", icon: Icons.send);
+      messageService.saveMessage(
+        Message(
+          sender: await UserService().loadUser() ?? "unknown",
+          receiver: "DEMO_USER",
+          message: controller.value.text,
+          creationTime: DateTime.now(),
+        ),
+      );
+
+      /*setState(() => isSending = true);
       var to = await BluetoothService.i.write(
         service: 1,
         variable: 1,
@@ -30,7 +42,7 @@ class _SendViewState extends State<SendView> {
       controller.clear();
       // ignore: use_build_context_synchronously
       context.showToast("sent to ${to.length} devices", icon: Icons.check);
-      setState(() => isSending = false);
+      setState(() => isSending = false);*/
     } catch (e) {
       // ignore: use_build_context_synchronously
       context.showToast("failed to send message", icon: Icons.alertOctagon);

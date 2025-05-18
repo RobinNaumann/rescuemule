@@ -24,9 +24,15 @@ class SendingService {
     HashMap<Peripheral, List<Message>> deviceMessageMap = HashMap();
 
     for (var device in devices) {
-      _messageService.getMessagesToSend(device.uuid).then((messages) {
-        deviceMessageMap[device] = messages;
-      });
+      final msgs = await _messageService.getMessagesToSend(device.uuid);
+      deviceMessageMap[device] = msgs;
+
+      for (var message in msgs) {
+        logger.d(
+          this,
+          'Message: ${message.id} to device: ${device.uuid} needs to be sent',
+        );
+      }
     }
 
     for (var entry in deviceMessageMap.entries) {

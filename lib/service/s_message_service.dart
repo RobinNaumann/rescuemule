@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
-import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_sent_ids_service.dart';
 import 'package:rescuemule/service/s_user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final messageService = MessageService();
 
 class MessageService {
   static const String _storageKey = 'saved_messages';
@@ -58,12 +59,9 @@ class MessageService {
     final List<int> alreadySentIDs = await service.loadSentIDs(deviceID);
 
     List<Message> messages = List.empty(growable: true);
-    loadMessages().then(
-      (result) => {
-        messages =
-            result.where((msg) => !alreadySentIDs.contains(msg.id)).toList(),
-      },
-    );
+    final result = await loadMessages();
+
+    messages = result.where((msg) => !alreadySentIDs.contains(msg.id)).toList();
     List<Message> messagesToSend = List.empty(growable: true);
     for (var msg in messages) {
       //at this point has to be done for every discovered device
@@ -80,8 +78,8 @@ class MessageService {
 
   Future<void> removeExpiredMessages() async {
     final prefs = await SharedPreferences.getInstance();
-    List<Message> messageList = List.empty(growable: true);
-    loadMessages().then((result) => {messageList = result});
+    List<Message> messageList = await loadMessages();
+
     List<int> expiredIDs = List.empty(growable: true);
     for (var msg in messageList) {
       if (msg.creationTime.isBefore(
@@ -107,7 +105,7 @@ class MessageService {
     return messages
         .where(
           (msg) =>
-              (msg.sender ==  userA && msg.receiver == userB) ||
+              (msg.sender == userA && msg.receiver == userB) ||
               (msg.sender == userB && msg.receiver == userA),
         )
         .toList();
