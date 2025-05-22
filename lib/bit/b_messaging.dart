@@ -7,8 +7,6 @@ import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
-import 'package:rescuemule/service/s_message_service.dart';
-import 'package:rescuemule/service/s_sending_service.dart';
 import 'package:rescuemule/view/v_message_list.dart';
 
 class _Msg {
@@ -26,8 +24,6 @@ class _Data {
 }
 
 class MessagingBit extends MapMsgBitControl<_Data> {
-  static StreamController<Message> msgStream = StreamController.broadcast();
-
   StreamSubscription? _visibles;
   static const builder = MapMsgBitBuilder<_Data, MessagingBit>.make;
 
@@ -59,11 +55,6 @@ class MessagingBit extends MapMsgBitControl<_Data> {
                     ], d?.devices ?? []),
                   );
                   AudioPlayer().play(AssetSource("sounds/esel_pixabay.mp3"));
-                  //save message as sent to previous hops
-                  //sentIDsService.saveMessageIdForHops(message);
-                  // Save the message to the local storage for relay
-                  messageService.saveMessage(message);
-                  msgStream.add(message);
                 },
               ),
             ],
@@ -74,8 +65,15 @@ class MessagingBit extends MapMsgBitControl<_Data> {
         var d = state.whenOrNull(onData: (d) => d);
         emit(_Data(d?.messages ?? [], devices));
       });
-      sendingService.registerListener();
     }
+  }
+
+  static sendMessage(Message message) {
+    BluetoothService.i.write(
+      service: 1,
+      variable: 1,
+      message: message.toBytes(),
+    );
   }
 
   @override

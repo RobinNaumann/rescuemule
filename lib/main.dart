@@ -1,9 +1,5 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/bit/b_example.dart';
 import 'package:rescuemule/bit/b_messaging.dart';
-import 'package:rescuemule/model/m_user.dart';
-import 'package:rescuemule/service/s_user_service.dart';
-import 'package:rescuemule/view/vp_home.dart';
 import 'package:rescuemule/view/vp_messaging.dart';
 
 const appName = "RescueMule";
@@ -19,10 +15,7 @@ void main() async {
 }
 
 final router = GoRouter(
-  routes: [
-    GoRoute(path: '/', builder: (context, _) => const ScaffoldExampleApp()),
-    GoRoute(path: '/msg', builder: (context, _) => const MessagingView()),
-  ],
+  routes: [GoRoute(path: '/', builder: (context, _) => const MessagingView())],
 );
 
 class YourApp extends StatelessWidget {
@@ -30,12 +23,10 @@ class YourApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BitProvider(
-    create: (_) => ExampleBit(),
-    child: BitProvider(
-      create: (_) => MessagingBit(),
-      child: 
-      MessagingBit.builder(onData: (_, __) =>
-      ElbeApp(router: router, debugShowCheckedModeBanner: false)),
+    create: (_) => MessagingBit(),
+    child: MessagingBit.builder(
+      onData:
+          (_, __) => ElbeApp(router: router, debugShowCheckedModeBanner: false),
     ),
   );
 }

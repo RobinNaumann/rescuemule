@@ -1,8 +1,6 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/bit/b_example.dart';
+import 'package:rescuemule/bit/b_messaging.dart';
 import 'package:rescuemule/model/m_message.dart';
-import 'package:rescuemule/service/s_message_service.dart';
-import 'package:rescuemule/service/s_user_service.dart';
 
 class SendView extends StatefulWidget {
   const SendView({super.key});
@@ -19,9 +17,9 @@ class _SendViewState extends State<SendView> {
     if (isSending) return;
     try {
       context.showToast("trying to send...", icon: Icons.send);
-      messageService.saveMessage(
+      MessagingBit.sendMessage(
         Message(
-          sender: await UserService().loadUser() ?? "unknown",
+          sender: "unknown",
           receiver: "DEMO_USER",
           message: controller.value.text,
           creationTime: DateTime.now(),
@@ -54,26 +52,23 @@ class _SendViewState extends State<SendView> {
 
   @override
   Widget build(BuildContext context) {
-    return ExampleBit.builder(
-      onData:
-          (bit, data) => Row(
-            children:
-                [
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      decoration: elbeFieldDeco(context, hint: "enter message"),
-                    ),
-                  ),
-                  SizedBox(
-                    width: context.rem(3.5),
-                    child: Button.major(
-                      icon: Icons.send,
-                      onTap: isSending ? null : () => send(),
-                    ),
-                  ),
-                ].spaced(),
-          ),
+    return Row(
+      children:
+          [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                decoration: elbeFieldDeco(context, hint: "enter message"),
+              ),
+            ),
+            SizedBox(
+              width: context.rem(3.5),
+              child: Button.major(
+                icon: Icons.send,
+                onTap: isSending ? null : () => send(),
+              ),
+            ),
+          ].spaced(),
     );
   }
 }
