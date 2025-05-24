@@ -28,10 +28,9 @@ class BLEPeripheralManager {
     final ganttS = services.map((s) => s.asGATT()).toList();
 
     for (var service in ganttS) {
-      try{
-      await _manager.addService(service);
-      } catch (e)
-      {
+      try {
+        await _manager.addService(service);
+      } catch (e) {
         logger.w(this, "Failed to add service ${service.uuid}", e);
       }
     }
@@ -47,6 +46,7 @@ class BLEPeripheralManager {
           value: Uint8List.fromList(v),
         );
       } catch (e) {
+        logger.w(this, "Failed to read characteristic $uuid from $central", e);
         _manager.respondReadRequestWithError(
           state.request,
           error: GATTError.unlikelyError,
@@ -62,6 +62,7 @@ class BLEPeripheralManager {
         chunker.onReceive(origin, char_, message);
         _manager.respondWriteRequest(state.request);
       } catch (e) {
+        logger.w(this, "Failed to write characteristic $char_ from $origin", e);
         _manager.respondWriteRequestWithError(
           state.request,
           error: GATTError.unlikelyError,

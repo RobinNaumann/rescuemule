@@ -26,20 +26,26 @@ class BleCentralManager {
     if (runPlatform.isAndroid) _manager.authorize();
   }
 
-  Future<List<UUID>> write(
+  Future<List<int>> write(
+    UUID device,
     int service,
     int variable,
-    List<int> message,
-    List<UUID>? devices,
+    List<List<int>> messages,
   ) async {
     // find the devices
-    List<UUID> sentTo = [];
+    Peripheral? per = _visibles.firstWhereOrNull((d) => d.uuid == device);
 
-    for (var device in _visibles) {
-      if (devices != null && !devices.contains(device.uuid)) continue;
+    if (per == null) {
+      logger.v(this, "No device found for $device");
+      return [];
+    }
+
+    final List<int> sentTo = [];
+
+    for (int i = 0; i < messages.length; i++) {
       try {
-        await _send(service, variable, device, message);
-        sentTo.add(device.uuid);
+        await _send(per, service, variable, messages[i]);
+        sentTo.add(i);
       } catch (e) {
         logger.w(this, "Failed to send to $device", e);
       }
@@ -48,9 +54,9 @@ class BleCentralManager {
   }
 
   Future<void> _send(
+    Peripheral peripheral,
     int service,
     int char,
-    Peripheral peripheral,
     List<int> message,
   ) async {
     final sUUID = makeUUID(service);

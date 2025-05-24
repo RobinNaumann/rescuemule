@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/bit/bit/bit_control.dart';
+import 'package:flutter/services.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/s_bluetooth.dart';
-import 'package:rescuemule/view/v_message_list.dart';
+import 'package:rescuemule/service/s_message.dart';
 
 class _Msg {
   final Message message;
@@ -18,7 +19,7 @@ class _Msg {
 
 class _Data {
   final List<_Msg> messages;
-  final List<Peripheral> devices;
+  final List<String> devices;
 
   _Data(this.messages, this.devices);
 }
@@ -45,9 +46,9 @@ class MessagingBit extends MapMsgBitControl<_Data> {
                 id: 1,
                 onWrite: (from, bytes) {
                   var d = state.whenOrNull(onData: (d) => d);
-                  final message = Message.fromBytes(
-                    bytes,
-                  ).withAddedHop(formatMacFromUUID(from));
+                  final message = Message.fromPacket(
+                    Uint8List.fromList(bytes),
+                  ).withHop(Hop.ble(from.toString()));
                   emit(
                     _Data([
                       ...d?.messages ?? [],
@@ -64,16 +65,17 @@ class MessagingBit extends MapMsgBitControl<_Data> {
       _visibles = BluetoothService.i.devices.listen((devices) {
         var d = state.whenOrNull(onData: (d) => d);
         emit(_Data(d?.messages ?? [], devices));
+
+        MessageService.i.onDeviceDiscovery(devices, (dev, messages) async {
+          return await BluetoothService.i.send(
+            device: dev,
+            service: 1,
+            variable: 1,
+            messages: messages,
+          );
+        });
       });
     }
-  }
-
-  static sendMessage(Message message) {
-    BluetoothService.i.write(
-      service: 1,
-      variable: 1,
-      message: message.toBytes(),
-    );
   }
 
   @override

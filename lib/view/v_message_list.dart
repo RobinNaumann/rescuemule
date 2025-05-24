@@ -18,29 +18,7 @@ class MessageList extends StatelessWidget {
                       scheme: ColorSchemes.secondary,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(m.message.message),
-                          Spaced.vertical(1.1),
-                          Text.code(
-                            "to: ${m.message.receiver}",
-                            variant: TypeVariants.bold,
-                          ),
-                          Spaced.vertical(.2),
-                          Text.code(
-                            "from: ${m.message.sender}",
-                            variant: TypeVariants.bold,
-                          ),
-                          Spaced.vertical(.2),
-                          Text.code(
-                            "at: ${m.message.creationTime}",
-                            variant: TypeVariants.bold,
-                          ),
-                          Spaced.vertical(.2),
-                          Text.code(
-                            "hops:${m.message.hops.map((h) => "\n  $h").join()}",
-                            variant: TypeVariants.bold,
-                          ),
-                        ],
+                        children: [Text(m.message.toString())],
                       ),
                     ),
                 ].spaced(),

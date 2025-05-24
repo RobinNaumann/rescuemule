@@ -19,6 +19,7 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_chat_core: ^2.2.0
   audioplayers: ^6.4.0
+  bson: ^5.0.7
 
 dev_dependencies:
   flutter_test:

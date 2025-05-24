@@ -1,6 +1,7 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/bit/b_messaging.dart';
+import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
+import 'package:rescuemule/service/s_message.dart';
 
 class SendView extends StatefulWidget {
   const SendView({super.key});
@@ -17,14 +18,15 @@ class _SendViewState extends State<SendView> {
     if (isSending) return;
     try {
       context.showToast("trying to send...", icon: Icons.send);
-      MessagingBit.sendMessage(
-        Message(
-          sender: "unknown",
-          receiver: "DEMO_USER",
-          message: controller.value.text,
-          creationTime: DateTime.now(),
-        ),
+
+      final m = Message.create(
+        type: "text",
+        sender: "unknown",
+        receiver: "DEMO_USER",
+        message: controller.value.text,
       );
+
+      MessageService.i.sendMessage(m);
       controller.clear();
 
       /*setState(() => isSending = true);
@@ -46,6 +48,7 @@ class _SendViewState extends State<SendView> {
     } catch (e) {
       // ignore: use_build_context_synchronously
       context.showToast("failed to send message", icon: Icons.alertOctagon);
+      logger.e(this, e.toString());
       setState(() => isSending = false);
     }
   }
