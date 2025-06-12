@@ -1,6 +1,8 @@
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/routing/s_routing.dart';
 
+/// A simple proof-of-concept routing service that
+/// always selects the first available device.
 class FirstRoutingService extends RoutingService {
   @override
   selectDevice(Message message) {

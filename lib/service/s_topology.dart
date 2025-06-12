@@ -2,6 +2,10 @@ import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/networks/s_connections.dart';
 import 'package:rescuemule/service/routing/s_routing.dart';
 
+/// A service that manages the network topology.
+/// It provides a stream of all devices currently connected to the network,
+/// and a stream of incoming messages.
+/// You can send messages to the network.
 class TopologyService {
   final ConnectionsService _connections;
   final RoutingService _routing;

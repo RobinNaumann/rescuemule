@@ -17,6 +17,10 @@ class NetworkDevice extends JsonModel {
   get map => {"id": id, "network": network, "lastSeen": lastSeen};
 }
 
+/// A service that manages connections to devices over various networks.
+/// This is an abstraction layer that allows the management of
+/// more than just the Bluetooth network. However, we currently only
+/// implemented a Bluetooth network.
 class ConnectionsService {
   /// how long to remember devices in the pool
   final int memoryMs;
