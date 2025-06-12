@@ -1,15 +1,18 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/bit/b_messaging.dart';
+import 'package:rescuemule/main.dart';
 
 class DevicesList extends StatelessWidget {
   const DevicesList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MessagingBit.builder(
-      onData:
-          (bit, data) => Text(
-            "${data.devices.length} device${data.devices.length == 1 ? "" : "s"} visible",
+    return StreamBuilder(
+      stream: topologyService.devices,
+      builder:
+          (_, data) => Text(
+            data.error != null
+                ? "error"
+                : "${data.data?.length ?? "-"} device${data.data?.length == 1 ? "" : "s"} visible",
             textAlign: TextAlign.center,
           ),
 

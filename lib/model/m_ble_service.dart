@@ -1,5 +1,5 @@
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
-import 'package:rescuemule/service/ble/s_ble_peripheral.dart';
+import 'package:rescuemule/service/networks/ble/s_ble_peripheral.dart';
 
 class BLEVariable<T> {
   final int id;
@@ -7,7 +7,7 @@ class BLEVariable<T> {
   final Function(UUID origin, List<int> bytes)? onWrite;
   final Future<List<int>> Function(UUID origin)? onRead;
 
-  BLEVariable({required this.id, this.label, this.onWrite, this.onRead});
+  const BLEVariable({required this.id, this.label, this.onWrite, this.onRead});
 
   GATTCharacteristic asGATT(int serviceId) => GATTCharacteristic.mutable(
     uuid: makeUUID(serviceId, id),
@@ -29,7 +29,7 @@ class BLEService {
   final String? label;
   final List<BLEVariable> variables;
 
-  BLEService({required this.id, this.label, this.variables = const []});
+  const BLEService({required this.id, this.label, this.variables = const []});
 
   GATTService asGATT() {
     return GATTService(

@@ -1,7 +1,6 @@
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
-import 'package:rescuemule/service/s_message.dart';
 
 class SendView extends StatefulWidget {
   const SendView({super.key});
@@ -18,33 +17,17 @@ class _SendViewState extends State<SendView> {
     if (isSending) return;
     try {
       context.showToast("trying to send...", icon: Icons.send);
+      final t = controller.value.text;
 
       final m = Message.create(
         type: "text",
         sender: "unknown",
         receiver: "DEMO_USER",
-        message: controller.value.text,
+        message: t == "" ? "NO TEXT" : t,
       );
 
-      MessageService.i.sendMessage(m);
+      topologyService.send(m);
       controller.clear();
-
-      /*setState(() => isSending = true);
-      var to = await BluetoothService.i.write(
-        service: 1,
-        variable: 1,
-        message: stringToAscii(controller.value.text),
-      );
-      if (to.isEmpty) {
-        // ignore: use_build_context_synchronously
-        context.showToast("no devices found", icon: Icons.alertTriangle);
-        setState(() => isSending = false);
-        return;
-      }
-      controller.clear();
-      // ignore: use_build_context_synchronously
-      context.showToast("sent to ${to.length} devices", icon: Icons.check);
-      setState(() => isSending = false);*/
     } catch (e) {
       // ignore: use_build_context_synchronously
       context.showToast("failed to send message", icon: Icons.alertOctagon);

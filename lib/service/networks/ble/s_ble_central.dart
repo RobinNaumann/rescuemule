@@ -4,8 +4,8 @@ import 'dart:typed_data';
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
-import 'package:rescuemule/service/ble/chunker.dart';
-import 'package:rescuemule/service/ble/s_ble_peripheral.dart';
+import 'package:rescuemule/service/networks/ble/chunker.dart';
+import 'package:rescuemule/service/networks/ble/s_ble_peripheral.dart';
 
 class BleCentralManager {
   List<int> services = [];
@@ -89,7 +89,6 @@ class BleCentralManager {
   Future<void> _scanContinously() async {
     check() async {
       final devices = await _scan(services);
-      logger.d(this, "Found ${devices.length} devices");
       _visibles = devices;
       _visiblesNotify.add(devices);
     }

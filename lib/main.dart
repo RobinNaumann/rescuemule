@@ -1,5 +1,8 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/bit/b_messaging.dart';
+import 'package:rescuemule/service/networks/s_bluetooth.dart';
+import 'package:rescuemule/service/networks/s_connections.dart';
+import 'package:rescuemule/service/routing/s_routing_first.dart';
+import 'package:rescuemule/service/s_topology.dart';
 import 'package:rescuemule/view/vp_messaging.dart';
 
 const appName = "RescueMule";
@@ -7,26 +10,30 @@ const debugName = "Mac";
 
 final logger = ConsoleLoggerService();
 
+//late final ConnectionsService connectionsService;
+late final TopologyService topologyService;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppInfoService.init();
 
-  runApp(const YourApp());
+  final bluetoothService = BluetoothService.preset(appId: appName);
+  topologyService = TopologyService(
+    connections: ConnectionsService(networks: [bluetoothService]),
+    routing: FirstRoutingService(),
+  );
+
+  runApp(const App());
 }
 
 final router = GoRouter(
   routes: [GoRoute(path: '/', builder: (context, _) => const MessagingView())],
 );
 
-class YourApp extends StatelessWidget {
-  const YourApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
-  Widget build(BuildContext context) => BitProvider(
-    create: (_) => MessagingBit(),
-    child: MessagingBit.builder(
-      onData:
-          (_, __) => ElbeApp(router: router, debugShowCheckedModeBanner: false),
-    ),
-  );
+  Widget build(BuildContext context) =>
+      ElbeApp(router: router, debugShowCheckedModeBanner: false);
 }

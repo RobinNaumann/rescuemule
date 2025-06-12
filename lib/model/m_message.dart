@@ -40,6 +40,7 @@ class Message<T> extends JsonModel {
   final T message;
   final UnixMs timestamp;
   final List<Hop> hops;
+  final String? isResponseTo;
 
   String get id => [type, sender, receiver].join('-').hashCode.toString();
 
@@ -49,6 +50,7 @@ class Message<T> extends JsonModel {
     required this.receiver,
     required this.message,
     required this.timestamp,
+    this.isResponseTo,
     this.hops = const [],
   });
 
@@ -57,12 +59,14 @@ class Message<T> extends JsonModel {
     required sender,
     required receiver,
     required message,
+    String? isResponseTo,
   }) => Message(
     type: type,
     sender: sender,
     receiver: receiver,
     message: message,
     timestamp: DateTime.now().asUnixMs,
+    isResponseTo: isResponseTo,
     hops: [],
   );
 
@@ -73,6 +77,7 @@ class Message<T> extends JsonModel {
     'receiver': receiver,
     'message': message,
     'timestamp': timestamp,
+    'isResponseTo': isResponseTo,
     'hops': hops,
   };
 
@@ -83,6 +88,7 @@ class Message<T> extends JsonModel {
       sender: map.asCast("s"),
       receiver: map.asCast("r"),
       message: map.asCast("m"),
+      isResponseTo: map.maybeCast("i"),
       timestamp: UnixMs(int.parse(map['t'].toString())),
       hops: map.maybeCastList<String>("h")?.map(Hop.fromString).toList() ?? [],
     );
@@ -94,6 +100,7 @@ class Message<T> extends JsonModel {
         's': sender,
         'r': receiver,
         'm': message,
+        'i': isResponseTo,
         't': timestamp,
         'h': hops,
       }).byteList;
@@ -104,6 +111,7 @@ class Message<T> extends JsonModel {
     DeviceId? receiver,
     String? message,
     UnixMs? timestamp,
+    Opt<String>? isResponseTo,
     List<Hop>? hops,
   }) {
     return Message(
@@ -111,6 +119,7 @@ class Message<T> extends JsonModel {
       sender: sender ?? this.sender,
       receiver: receiver ?? this.receiver,
       message: message ?? this.message,
+      isResponseTo: optEval(isResponseTo, this.isResponseTo),
       timestamp: timestamp ?? this.timestamp,
       hops: hops ?? this.hops,
     );
