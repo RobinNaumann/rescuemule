@@ -22,12 +22,12 @@ class TopologyService {
 
   /// send a message to the network. The routing service
   /// will determine the next hop to send the message to.
-  void send(Message message) async {
+  void send(Message message) {
     try {
       final deviceId = _routing.selectDevice(message);
       _connections.send(deviceId, [message]);
     } catch (e) {
-      throw StateError("could not send message: $e");
+      throw Exception("could not send message: $e");
     }
   }
 

@@ -26,7 +26,7 @@ class Chunker {
     for (int i = 0; i < chunks.length; i++) {
       final prefix = i == chunks.length - 1 ? 0 : 1;
       final m = [prefix, ...chunks[i]];
-      logger.d(Chunker, "Sending chunk $i/${chunks.length - 1}");
+      logger.d("Chunker", "Sending chunk $i/${chunks.length - 1}");
       await send(m);
     }
   }

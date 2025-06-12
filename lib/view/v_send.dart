@@ -31,7 +31,7 @@ class _SendViewState extends State<SendView> {
     } catch (e) {
       // ignore: use_build_context_synchronously
       context.showToast("failed to send message", icon: Icons.alertOctagon);
-      logger.e(this, e.toString());
+      logger.w(this, e.toString());
       setState(() => isSending = false);
     }
   }
