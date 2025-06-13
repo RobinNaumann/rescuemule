@@ -33,6 +33,8 @@ the app provides a global `Networks`. This can be used to send and listen for me
 
 - **custom routing**: To define your own routing logic, extend the `RoutingManager` class and pass your class as a router to the `NetworksService` constructor.
 
+  - **note**: Look at the `routing_first.dart` as a reference. It simply forwards all messages to the first available device in the network. if no device is available, it rejects the message.
+
 - **add network**: The `NetworksService` also takes the instance of a `ConnectionsManager` as a parameter. This is responsible for managing the connections to the different protocols. You can define your own network by extending the `NetworkService` class and passing your class as a network to the `ConnectionsManager` constructor.
 
 ### contacts
