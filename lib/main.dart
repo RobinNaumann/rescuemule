@@ -3,19 +3,20 @@ import 'package:rescuemule/service/connectivity/s_connections.dart';
 import 'package:rescuemule/service/networks/bluetooth/s_bluetooth.dart';
 import 'package:rescuemule/service/routing/s_routing_first.dart';
 import 'package:rescuemule/service/s_networks.dart';
-import 'package:rescuemule/view/vp_messaging.dart';
+import 'package:rescuemule/view/demo/vp_demo.dart';
 
 const appName = "RescueMule";
 
 final logger = ConsoleLoggerService();
 
 late final NetworksService networksService;
+late final debugDeviceId;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppInfoService.init();
 
-  final debugDeviceId = AppInfoService.i.platform.name;
+  debugDeviceId = AppInfoService.i.platform.name;
 
   networksService = NetworksService(
     routing: FirstRoutingManager(),
