@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  elbe: ^0.2.8
+  elbe: ^0.2.9
   bluetooth_low_energy: ^6.0.2
   flutter_chat_ui: ^2.1.3
   shared_preferences: ^2.5.3
@@ -44,7 +44,7 @@ flutter_icons:
 
 flutter_native_splash:
   color: "#ffffff"
-  image: assets/images/flashscreen.png 
+  image: assets/images/flashscreen.png
   android: true
   ios: true
   fullscreen: true

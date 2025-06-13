@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
-import 'package:rescuemule/service/networks/s_bluetooth.dart';
+import 'package:rescuemule/service/connectivity/s_network.dart';
 
 class NetworkDevice extends JsonModel {
   final DeviceId id;
@@ -21,11 +21,11 @@ class NetworkDevice extends JsonModel {
 /// This is an abstraction layer that allows the management of
 /// more than just the Bluetooth network. However, we currently only
 /// implemented a Bluetooth network.
-class ConnectionsService {
+class ConnectionsManager {
   /// how long to remember devices in the pool
   final int memoryMs;
   final int sendIntervalMs;
-  final List<NetworkService> networks;
+  final List<NetworkManager> networks;
   final Map<DeviceId, List<Message>> _sendPool = {};
   final List<StreamSubscription> _devListeners = [];
   final List<StreamSubscription> _msgListeners = [];
@@ -46,7 +46,7 @@ class ConnectionsService {
   final StreamController<Message> _recieveCtrl = StreamController.broadcast();
   Stream<Message> get received => _recieveCtrl.stream;
 
-  ConnectionsService({
+  ConnectionsManager({
     required this.networks,
     this.memoryMs = 30 * 1000,
     this.sendIntervalMs = 5000,

@@ -3,13 +3,22 @@ import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
 
+final List<Message> _demoAllReceived = [];
+
+/// A stream of all messages received by the current device.
+late Stream<List<Message>> demoAllReceived =
+    networksService.received.map((m) {
+      _demoAllReceived.add(m);
+      return _demoAllReceived;
+    }).asBroadcastStream();
+
 class MessageList extends StatelessWidget {
   const MessageList({super.key});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: topologyService.demoAllReceived,
+      stream: demoAllReceived,
       builder:
           (_, data) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

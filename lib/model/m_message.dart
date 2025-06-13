@@ -78,7 +78,7 @@ class Message<T> extends JsonModel {
     'message': message,
     'timestamp': timestamp,
     'isResponseTo': isResponseTo,
-    'hops': hops,
+    'hops': hops.map((h) => h.map).toList(),
   };
 
   factory Message.fromPacket(Uint8List packet) {

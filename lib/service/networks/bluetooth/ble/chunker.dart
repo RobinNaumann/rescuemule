@@ -26,7 +26,7 @@ class Chunker {
     for (int i = 0; i < chunks.length; i++) {
       final prefix = i == chunks.length - 1 ? 0 : 1;
       final m = [prefix, ...chunks[i]];
-      logger.d("Chunker", "Sending chunk $i/${chunks.length - 1}");
+      logger.d("Chunker", "Sending chunk ${i + 1}/${chunks.length}");
       await send(m);
     }
   }
@@ -41,7 +41,7 @@ class Chunker {
       _chunkCaches[deviceId]![charId] = [];
     }
 
-    // if the first byte is 0, we send the whole message on
+    // if the first byte is 0, we send the whole message onward
     if (message.first == 0) {
       final m = [..._chunkCaches[deviceId]![charId]!, ...message.sublist(1)];
       _chunkCaches[deviceId]![charId] = [];

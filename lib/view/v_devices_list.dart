@@ -1,5 +1,6 @@
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
+import 'package:rescuemule/service/connectivity/s_connections.dart';
 
 class DevicesList extends StatelessWidget {
   const DevicesList({super.key});
@@ -7,14 +8,27 @@ class DevicesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: topologyService.devices,
+      stream: networksService.devices,
       builder:
-          (_, data) => Text(
-            data.error != null
-                ? "error"
-                : "${data.data?.length ?? "-"} device${data.data?.length == 1 ? "" : "s"} visible",
-            textAlign: TextAlign.center,
-          ),
+          (_, data) =>
+              data.data == null || data.data!.isEmpty
+                  ? Text("no devices found", textAlign: TextAlign.center)
+                  : SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children:
+                          [
+                            for (var d in data.data ?? <NetworkDevice>[])
+                              Card(
+                                scheme: ColorSchemes.secondary,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [Text(d.network), Text.bodyS(d.id)],
+                                ),
+                              ),
+                          ].spaced(),
+                    ),
+                  ),
 
       /*Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

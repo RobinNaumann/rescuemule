@@ -4,20 +4,34 @@ import 'dart:typed_data';
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
-import 'package:rescuemule/service/networks/ble/chunker.dart';
-import 'package:rescuemule/service/networks/ble/s_ble_peripheral.dart';
+import 'package:rescuemule/service/networks/bluetooth/ble/chunker.dart';
+import 'package:rescuemule/service/networks/bluetooth/ble/s_ble_peripheral.dart';
+
+class _VisibleDevice extends JsonModel {
+  final Peripheral peripheral;
+  final UnixMs lastSeen;
+
+  _VisibleDevice({required this.peripheral, required this.lastSeen});
+
+  _VisibleDevice.now(Peripheral peripheral)
+    : this(peripheral: peripheral, lastSeen: DateTime.now().asUnixMs);
+
+  @override
+  get map => {"peripheral": peripheral.uuid, "lastSeen": lastSeen};
+}
 
 class BleCentralManager {
+  final int memoryMs;
   List<int> services = [];
   Timer? _checker;
-  List<Peripheral> _visibles = [];
+  List<_VisibleDevice> _visibles = [];
   final StreamController<List<Peripheral>> _visiblesNotify =
       StreamController<List<Peripheral>>.broadcast();
   Stream<List<Peripheral>> get visiblesStream => _visiblesNotify.stream;
 
   final _manager = CentralManager();
 
-  BleCentralManager({required this.services}) {
+  BleCentralManager({required this.services, this.memoryMs = 20 * 1000}) {
     _prepare();
     _scanContinously();
   }
@@ -33,7 +47,7 @@ class BleCentralManager {
     List<List<int>> messages,
   ) async {
     // find the devices
-    Peripheral? per = _visibles.firstWhereOrNull((d) => d.uuid == device);
+    Peripheral? per = _getPeripheral(device);
 
     if (per == null) {
       logger.v(this, "No device found for $device");
@@ -51,6 +65,26 @@ class BleCentralManager {
       }
     }
     return sentTo;
+  }
+
+  Future<List<int>> read(UUID device, int service, int variable) async {
+    // find the devices
+    Peripheral? per = _getPeripheral(device);
+
+    if (per == null) throw Exception("No device found for $device");
+
+    await _manager.connect(per);
+
+    var gattChar = (await _manager.discoverGATT(per))
+        .firstWhereOrNull((s) => s.uuid == makeUUID(service))
+        ?.characteristics
+        .firstWhereOrNull((c) => c.uuid == makeUUID(service, variable));
+
+    if (gattChar == null) throw Exception("char $service-$variable not found");
+
+    final val = await _manager.readCharacteristic(per, gattChar);
+    await _manager.disconnect(per);
+    return val.toList();
   }
 
   Future<void> _send(
@@ -89,8 +123,19 @@ class BleCentralManager {
   Future<void> _scanContinously() async {
     check() async {
       final devices = await _scan(services);
-      _visibles = devices;
-      _visiblesNotify.add(devices);
+
+      final visDev = devices.map((d) => _VisibleDevice.now(d)).toList();
+
+      // add non duplicates that are not expired
+      for (final d in _visibles) {
+        if (d.lastSeen + memoryMs > DateTime.now().asUnixMs &&
+            !visDev.any((v) => v.peripheral.uuid == d.peripheral.uuid)) {
+          visDev.add(d);
+        }
+      }
+
+      _visibles = visDev;
+      _visiblesNotify.add(visDev.map((e) => e.peripheral).toList());
     }
 
     Timer.periodic(Duration(seconds: 5), (_) => check());
@@ -119,6 +164,12 @@ class BleCentralManager {
         .map((e) => e.peripheral)
         .toSet()
         .toList();
+  }
+
+  Peripheral? _getPeripheral(UUID id) {
+    return _visibles
+        .firstWhereOrNull((d) => d.peripheral.uuid == id)
+        ?.peripheral;
   }
 
   void dispose() {

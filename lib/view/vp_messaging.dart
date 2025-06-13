@@ -9,7 +9,7 @@ class MessagingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    title: appName,
+    title: appName + " Demo",
 
     child: Padded.all(
       child: ListView(

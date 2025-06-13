@@ -1,5 +1,5 @@
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
-import 'package:rescuemule/service/networks/ble/s_ble_peripheral.dart';
+import 'package:rescuemule/service/networks/bluetooth/ble/s_ble_peripheral.dart';
 
 class BLEVariable<T> {
   final int id;

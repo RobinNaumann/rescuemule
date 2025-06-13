@@ -3,11 +3,11 @@ import 'package:rescuemule/service/routing/s_routing.dart';
 
 /// A simple proof-of-concept routing service that
 /// always selects the first available device.
-class FirstRoutingService extends RoutingService {
+class FirstRoutingManager extends RoutingManager {
   @override
   selectDevice(Message message) {
     // DEMO: send to the first available device
-    if (currentDevices.isEmpty) throw Exception("No devices to send to.");
-    return currentDevices.first.id;
+    if (context.currentDevices.isEmpty) throw Exception("No devices found");
+    return context.currentDevices.first.id;
   }
 }

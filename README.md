@@ -29,11 +29,11 @@ you are welcome to contribute to this project. Here are a few instructions to ge
 
 ##### Services
 
-the app provides a global `TopologyService`. This can be used to send and listen for messages across the network. The service is a singleton and can be accessed from anywhere in the app via the `topologyService` constant.
+the app provides a global `Networks`. This can be used to send and listen for messages across the network. The service is a singleton and can be accessed from anywhere in the app via the `networksService` constant.
 
-- **custom routing**: To define your own routing logic, extend the `RoutingService` class and pass your class as a router to the `TopologyService` constructor.
+- **custom routing**: To define your own routing logic, extend the `RoutingManager` class and pass your class as a router to the `NetworksService` constructor.
 
-- **add network**: The `TopologyService` also takes the instance of a `ConnectionsService` as a parameter. This service is responsible for managing the connections to the different protocols. You can define your own network by extending the `NetworkService` class and passing your class as a network to the `ConnectionsService` constructor.
+- **add network**: The `NetworksService` also takes the instance of a `ConnectionsManager` as a parameter. This is responsible for managing the connections to the different protocols. You can define your own network by extending the `NetworkService` class and passing your class as a network to the `ConnectionsManager` constructor.
 
 ### contacts
 

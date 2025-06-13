@@ -1,28 +1,30 @@
 import 'package:rescuemule/model/m_message.dart';
-import 'package:rescuemule/service/networks/s_connections.dart';
+import 'package:rescuemule/service/connectivity/s_connections.dart';
 import 'package:rescuemule/service/routing/s_routing.dart';
 
 /// A service that manages the network topology.
 /// It provides a stream of all devices currently connected to the network,
 /// and a stream of incoming messages.
-/// You can send messages to the network.
-class TopologyService {
-  final ConnectionsService _connections;
-  final RoutingService _routing;
+/// You can send messages to the network, and the routing service
+class NetworksService {
+  final ConnectionsManager _connections;
+  final RoutingManager _routing;
 
-  TopologyService({
-    required ConnectionsService connections,
-    required RoutingService routing,
+  NetworksService({
+    required ConnectionsManager connections,
+    required RoutingManager routing,
   }) : _routing = routing,
        _connections = connections {
-    _routing.init(_connections.devices, _connections.currentDevices);
+    _routing.init(_connections);
   }
 
   /// A stream of all devices currently connected to the network.
   late Stream<List<NetworkDevice>> devices = _connections.devices;
 
   /// A stream of incoming messages.
-  late Stream<Message> received = _connections.received;
+  late Stream<Message> received = _connections.received.where(
+    (m) => _routing.onReceive(m),
+  );
 
   /// send a message to the network. The routing service
   /// will determine the next hop to send the message to.
@@ -37,12 +39,10 @@ class TopologyService {
 
   // ======= demo functions to show the capabilities =======
 
-  final List<Message> _demoAllReceived = [];
-
-  /// A stream of all messages received by the current device.
-  late Stream<List<Message>> demoAllReceived =
-      _connections.received.map((m) {
-        _demoAllReceived.add(m);
-        return _demoAllReceived;
-      }).asBroadcastStream();
+  /// close the service and dispose of the connections and routing manager.
+  /// The service wil no longer work after this call.
+  void dispose() {
+    _connections.dispose();
+    _routing.dispose();
+  }
 }

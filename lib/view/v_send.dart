@@ -26,7 +26,7 @@ class _SendViewState extends State<SendView> {
         message: t == "" ? "NO TEXT" : t,
       );
 
-      topologyService.send(m);
+      networksService.send(m);
       controller.clear();
     } catch (e) {
       // ignore: use_build_context_synchronously

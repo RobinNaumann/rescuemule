@@ -4,7 +4,7 @@ import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/services/s_app_info.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
-import 'package:rescuemule/service/networks/ble/chunker.dart';
+import 'package:rescuemule/service/networks/bluetooth/ble/chunker.dart';
 
 class BLEPeripheralManager {
   final String appId;
@@ -72,7 +72,7 @@ class BLEPeripheralManager {
 
     await _manager.startAdvertising(
       Advertisement(
-        name: "${appId}_$debugName",
+        name: "${appId}",
         serviceUUIDs: ganttS.map((s) => s.uuid).toList(),
       ),
     );

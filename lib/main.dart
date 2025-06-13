@@ -1,26 +1,29 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/service/networks/s_bluetooth.dart';
-import 'package:rescuemule/service/networks/s_connections.dart';
+import 'package:rescuemule/service/connectivity/s_connections.dart';
+import 'package:rescuemule/service/networks/bluetooth/s_bluetooth.dart';
 import 'package:rescuemule/service/routing/s_routing_first.dart';
-import 'package:rescuemule/service/s_topology.dart';
+import 'package:rescuemule/service/s_networks.dart';
 import 'package:rescuemule/view/vp_messaging.dart';
 
 const appName = "RescueMule";
-const debugName = "Mac";
 
 final logger = ConsoleLoggerService();
 
-//late final ConnectionsService connectionsService;
-late final TopologyService topologyService;
+late final NetworksService networksService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppInfoService.init();
 
-  final bluetoothService = BluetoothService.preset(appId: appName);
-  topologyService = TopologyService(
-    connections: ConnectionsService(networks: [bluetoothService]),
-    routing: FirstRoutingService(),
+  final debugDeviceId = AppInfoService.i.platform.name;
+
+  networksService = NetworksService(
+    routing: FirstRoutingManager(),
+    connections: ConnectionsManager(
+      networks: [
+        BluetoothManager.preset(appId: appName, deviceId: debugDeviceId),
+      ],
+    ),
   );
 
   runApp(const App());
