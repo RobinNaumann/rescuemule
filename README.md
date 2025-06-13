@@ -29,7 +29,7 @@ you are welcome to contribute to this project. Here are a few instructions to ge
 
 ##### Services
 
-the app provides a global `Networks`. This can be used to send and listen for messages across the network. The service is a singleton and can be accessed from anywhere in the app via the `networksService` constant.
+the app provides a global `Networks`. This can be used to send and listen for messages across the network. The service is a singleton and can be accessed from anywhere in the app via the `NetworkBit` state.
 
 - **custom routing**: To define your own routing logic, extend the `RoutingManager` class and pass your class as a router to the `NetworksService` constructor.
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:flutter/services.dart';
+import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_ble_service.dart';
 import 'package:rescuemule/model/m_message.dart';
 import 'package:rescuemule/service/connectivity/s_network.dart';
@@ -51,6 +52,11 @@ class BluetoothManager extends NetworkManager {
       ),
     ];
 
+    logger.d(
+      this,
+      "BluetoothManager preset with appId: $appId, deviceId: $deviceId",
+    );
+
     _start();
   }
 
@@ -97,8 +103,9 @@ class BluetoothManager extends NetworkManager {
     await _pMan.advertise(advertising);
   }
 
-  void dispose() {
+  Future<void> dispose() async {
     _cMan.dispose();
+    await _pMan.dispose();
   }
 
   @override

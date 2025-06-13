@@ -293,10 +293,10 @@ packages:
     dependency: "direct main"
     description:
       name: elbe
-      sha256: e30180a1303284445fd9c95235905853c6682c4ec18574b9b522c862c34c7d85
+      sha256: "77e2c674a109aef875583d157ca9f36a9f4a111f9a6ee94dccd1c95b32ae4950"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.9"
+    version: "0.2.11"
   fake_async:
     dependency: transitive
     description:

@@ -13,7 +13,7 @@ abstract class NetworkManager {
   Map<String, String> hardwareMappings = {};
   Stream<Message> get messages;
   Future<List<String>> send(String device, List<Message> messages);
-  void dispose();
+  Future<void> dispose();
 
   /// A stream of devices that are currently available on the network.
   /// This stream will emit a list of device IDs (as strings) that are
@@ -31,6 +31,10 @@ abstract class NetworkManager {
         logger.v(this, "Failed to get device ID for $d", e);
       }
     }
+
+    // remove all unused mappings
+    hardwareMappings.removeWhere((key, value) => !devs.contains(key));
+
     return devs;
   });
 

@@ -1,9 +1,11 @@
 import 'package:elbe/elbe.dart';
 import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
+import 'package:rescuemule/service/s_networks.dart';
 
 class SendView extends StatefulWidget {
-  const SendView({super.key});
+  final NetworksService networksService;
+  const SendView({super.key, required this.networksService});
 
   @override
   State<SendView> createState() => _SendViewState();
@@ -26,11 +28,14 @@ class _SendViewState extends State<SendView> {
         message: t == "" ? "NO TEXT" : t,
       );
 
-      networksService.send(m);
+      widget.networksService.send(m);
       controller.clear();
     } catch (e) {
       // ignore: use_build_context_synchronously
-      context.showToast("failed to send message", icon: Icons.alertOctagon);
+      context.showToast(
+        "routing failed. did not send",
+        icon: Icons.alertOctagon,
+      );
       logger.w(this, e.toString());
       setState(() => isSending = false);
     }

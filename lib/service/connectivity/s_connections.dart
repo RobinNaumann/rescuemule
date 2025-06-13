@@ -63,6 +63,11 @@ class ConnectionsManager {
         Duration(milliseconds: sendIntervalMs),
       ).listen((_) => _tryToSend()),
     );
+
+    logger.d(
+      this,
+      "started listening to networks ${this.networks.map((e) => e.key)}",
+    );
   }
 
   /// Method to send a message
@@ -105,9 +110,18 @@ class ConnectionsManager {
     _devicesCtrl.add(_devices);
   }
 
-  void dispose() {
+  Future<void> dispose() async {
     _devListeners.forEach((l) => l.cancel());
     _msgListeners.forEach((l) => l.cancel());
     _selfListeners.forEach((l) => l.cancel());
+
+    // dispose all networks
+    for (final n in networks) {
+      try {
+        await n.dispose();
+      } catch (e) {
+        logger.w(this, "Failed to dispose network ${n.key}", e);
+      }
+    }
   }
 }

@@ -41,8 +41,8 @@ class NetworksService {
 
   /// close the service and dispose of the connections and routing manager.
   /// The service wil no longer work after this call.
-  void dispose() {
-    _connections.dispose();
+  Future<void> dispose() async {
+    await _connections.dispose();
     _routing.dispose();
   }
 }

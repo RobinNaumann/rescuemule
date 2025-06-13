@@ -1,19 +1,20 @@
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/main.dart';
 import 'package:rescuemule/model/m_message.dart';
+import 'package:rescuemule/service/s_networks.dart';
 
 final List<Message> _demoAllReceived = [];
 
-/// A stream of all messages received by the current device.
-late Stream<List<Message>> demoAllReceived =
-    networksService.received.map((m) {
-      _demoAllReceived.add(m);
-      return _demoAllReceived;
-    }).asBroadcastStream();
-
 class MessageList extends StatelessWidget {
-  const MessageList({super.key});
+  final NetworksService networksService;
+  MessageList({super.key, required this.networksService});
+
+  /// A stream of all messages received by the current device.
+  late Stream<List<Message>> demoAllReceived =
+      networksService.received.map((m) {
+        _demoAllReceived.add(m);
+        return _demoAllReceived;
+      }).asBroadcastStream();
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:bluetooth_low_energy/bluetooth_low_energy.dart';
@@ -9,6 +10,7 @@ import 'package:rescuemule/service/networks/bluetooth/ble/chunker.dart';
 class BLEPeripheralManager {
   final String appId;
   final _manager = PeripheralManager();
+  final List<StreamSubscription> _listeners = [];
 
   BLEPeripheralManager(this.appId);
 
@@ -35,40 +37,52 @@ class BLEPeripheralManager {
       }
     }
 
-    _manager.characteristicReadRequested.listen((state) async {
-      final uuid = state.characteristic.uuid;
-      final central = state.central.uuid;
-      try {
-        final char = findCharacteristicByUUID(services, uuid);
-        final v = await char.onRead!.call(central);
-        _manager.respondReadRequestWithValue(
-          state.request,
-          value: Uint8List.fromList(v),
-        );
-      } catch (e) {
-        logger.w(this, "Failed to read characteristic $uuid from $central", e);
-        _manager.respondReadRequestWithError(
-          state.request,
-          error: GATTError.unlikelyError,
-        );
-      }
-    });
+    _listeners.add(
+      _manager.characteristicReadRequested.listen((state) async {
+        final uuid = state.characteristic.uuid;
+        final central = state.central.uuid;
+        try {
+          final char = findCharacteristicByUUID(services, uuid);
+          final v = await char.onRead!.call(central);
+          _manager.respondReadRequestWithValue(
+            state.request,
+            value: Uint8List.fromList(v),
+          );
+        } catch (e) {
+          logger.w(
+            this,
+            "Failed to read characteristic $uuid from $central",
+            e,
+          );
+          _manager.respondReadRequestWithError(
+            state.request,
+            error: GATTError.unlikelyError,
+          );
+        }
+      }),
+    );
 
-    _manager.characteristicWriteRequested.listen((state) async {
-      final char_ = state.characteristic.uuid;
-      final origin = state.central.uuid;
-      final message = state.request.value;
-      try {
-        chunker.onReceive(origin, char_, message);
-        _manager.respondWriteRequest(state.request);
-      } catch (e) {
-        logger.w(this, "Failed to write characteristic $char_ from $origin", e);
-        _manager.respondWriteRequestWithError(
-          state.request,
-          error: GATTError.unlikelyError,
-        );
-      }
-    });
+    _listeners.add(
+      _manager.characteristicWriteRequested.listen((state) async {
+        final char_ = state.characteristic.uuid;
+        final origin = state.central.uuid;
+        final message = state.request.value;
+        try {
+          chunker.onReceive(origin, char_, message);
+          _manager.respondWriteRequest(state.request);
+        } catch (e) {
+          logger.w(
+            this,
+            "Failed to write characteristic $char_ from $origin",
+            e,
+          );
+          _manager.respondWriteRequestWithError(
+            state.request,
+            error: GATTError.unlikelyError,
+          );
+        }
+      }),
+    );
 
     await _manager.startAdvertising(
       Advertisement(
@@ -80,6 +94,13 @@ class BLEPeripheralManager {
 
   Future<void> stopAdvertising() async {
     await _manager.stopAdvertising();
+  }
+
+  Future<void> dispose() async {
+    await stopAdvertising();
+    _listeners.forEach((l) => l.cancel());
+    await _manager.removeAllServices();
+    logger.w(this, "disposed BluetoothManager");
   }
 }
 

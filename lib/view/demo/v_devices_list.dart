@@ -1,9 +1,10 @@
 import 'package:elbe/elbe.dart';
-import 'package:rescuemule/main.dart';
 import 'package:rescuemule/service/connectivity/s_connections.dart';
+import 'package:rescuemule/service/s_networks.dart';
 
 class DevicesList extends StatelessWidget {
-  const DevicesList({super.key});
+  final NetworksService networksService;
+  const DevicesList({super.key, required this.networksService});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +21,10 @@ class DevicesList extends StatelessWidget {
                           [
                             for (var d in data.data ?? <NetworkDevice>[])
                               Card(
+                                padding: RemInsets.symmetric(
+                                  horizontal: .75,
+                                  vertical: .5,
+                                ),
                                 scheme: ColorSchemes.secondary,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
